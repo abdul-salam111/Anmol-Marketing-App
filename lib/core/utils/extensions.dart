@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 extension DateTimeExtensions on DateTime {
 //////////////////////////////////// DATE EXTENSION/////////////////////////////////////////
@@ -205,8 +206,7 @@ extension WidgetExtensions on Widget {
   Widget withTooltip(String message, {Decoration? decoration, double? height}) {
     return Tooltip(
       message: message,
-      decoration: decoration,
-      height: height,
+      decoration: decoration, constraints: BoxConstraints(minHeight: height!),
       child: this,
     );
   }

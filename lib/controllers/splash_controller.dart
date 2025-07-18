@@ -8,10 +8,10 @@ class SplashController extends GetxController {
     _initApp();
   }
 
-   _initApp() async {
+  _initApp() async {
     await Future.delayed(const Duration(seconds: 4));
     Get.delete<SplashController>();
-    Get.toNamed(AppRoutes.login);
+    Get.offAllNamed(AppRoutes.login);
 
     //
     // // Example: check login or just navigate

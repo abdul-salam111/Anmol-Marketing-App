@@ -4,8 +4,11 @@ import 'package:anmol_marketing/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  
+
   runApp(const MyApp());
 }
 
@@ -19,7 +22,7 @@ class MyApp extends StatelessWidget {
       theme: AppThemes.lightTheme,
       themeMode: ThemeMode.light,
       darkTheme: AppThemes.darkTheme,
-      initialRoute: AppRoutes.splash,
+      initialRoute: AppRoutes.login,
       getPages: AppPages.routes,
     );
   }

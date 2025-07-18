@@ -1,9 +1,9 @@
 import 'package:anmol_marketing/controllers/controllers.dart';
 import 'package:get/get.dart';
 
-class LoginBinding extends Bindings {
+class CatalogueBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => LoginController());
+    Get.lazyPut(() => CatalogueController());
   }
 }

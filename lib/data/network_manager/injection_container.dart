@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:anmol_marketing/data/network_manager/prints.dart';
 
 
-import 'dio_helper.dart';
 import 'package:dio/dio.dart';
 
 Dio getDio() {

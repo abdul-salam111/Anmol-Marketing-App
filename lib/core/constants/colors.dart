@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   static const appPrimaryColor = Color(0xff400CB6);
+  
   static const appSecondaryColor = Color(0xffDED2FA);
   static const appTertiaryColor = Color(0xff3927AD);
   static const appLightThemeBackground = Color(0xffffffff);
   static const appDarkThemeBackground = Color(0xff000000);
   static const greyTextColor = Color(0xff717171);
-  static const blackTextColor = Color(0xff717171);
+  static const blackTextColor = Color(0xff000000);
+  static const whiteTextColor = Color(0xffffffff);
 
   static const greyColor = Color(0xff707070);
   static const darkGreyColor = Color.fromARGB(255, 172, 172, 172);

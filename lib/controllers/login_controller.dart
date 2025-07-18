@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 class LoginController extends GetxController{
  final TextEditingController phoneNumberController=TextEditingController();
  final TextEditingController passwordController=TextEditingController();
+final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
 
 
  @override

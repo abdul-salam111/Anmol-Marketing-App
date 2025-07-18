@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class UnfocusWrapper extends StatelessWidget {
   final Widget child;
 
-  const UnfocusWrapper({required this.child});
+  const UnfocusWrapper({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
