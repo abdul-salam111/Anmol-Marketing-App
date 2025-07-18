@@ -1,16 +1,15 @@
 import 'package:anmol_marketing/controllers/catalogue_controller.dart';
 import 'package:anmol_marketing/core/core.dart';
-import 'package:anmol_marketing/views/widgets/custom_appbar.dart';
+import 'package:anmol_marketing/routes/app_routes.dart';
+import 'package:anmol_marketing/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
 
 class CatalogueScreen extends GetView<CatalogueController> {
   const CatalogueScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-   
     return UnfocusWrapper(
       child: Scaffold(
         drawer: Drawer(),
@@ -20,61 +19,44 @@ class CatalogueScreen extends GetView<CatalogueController> {
           child: Column(
             children: [
               SizedBox(height: 10),
-              TextField(
-                style:  context.bodyMediumStyle!.copyWith(color: AppColors.greyColor),
-                decoration: InputDecoration(
-                  hintText: "Search",
-                  hintStyle: context.bodyMediumStyle!.copyWith(color: AppColors.greyColor),
-                  prefixIcon: Icon(
-                    Iconsax.search_normal,
-                    color: AppColors.greyColor,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(color: AppColors.darkGreyColor),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(color: AppColors.darkGreyColor),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(color: AppColors.greyColor),
-                  ),
-                ),
+              CustomSearchField(
+                onChanged: (value) {
+                  controller.searchQuery.value = value;
+                  controller.searchCompanies(value);
+                },
               ),
               SizedBox(height: 10),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: controller.companies.length,
-                  itemBuilder: (context, index) {
-                    final company = controller.companies[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: AppColors.darkGreyColor),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: Image.network(
-                              company.logoPath,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
+              Obx(
+                () => Expanded(
+                  child: controller.filterCompanies.isEmpty
+                      ? Center(child: Text("Not found"))
+                      : ListView.builder(
+                          itemCount: controller.filterCompanies.length,
+                          itemBuilder: (context, index) {
+                            final company = controller.filterCompanies[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: ListTile(
+                                onTap: () {
+                                  Get.toNamed(
+                                    AppRoutes.viewProducts,
+                                    arguments: company,
+                                  );
+                                },
+                                contentPadding: EdgeInsets.zero,
+                                leading: ProductImage(
+                                  imageUrl: company.logoPath,
+                                  width: 50,
+                                  height: 50,
+                                ),
+                                title: Text(
+                                  company.name,
+                                  style: context.bodyLargeStyle,
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                        title: Text(
-                          company.name,
-                          style: context.bodyLargeStyle,
-                        ),
-                      ),
-                    );
-                  },
                 ),
               ),
             ],

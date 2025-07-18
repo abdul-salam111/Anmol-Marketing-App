@@ -1,7 +1,5 @@
 import 'package:anmol_marketing/controllers/controllers.dart';
 import 'package:anmol_marketing/core/core.dart';
-import 'package:anmol_marketing/views/catalogue_screen.dart';
-import 'package:anmol_marketing/views/create_order_screen.dart';
 import 'package:anmol_marketing/views/views.dart';
 import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
@@ -61,7 +59,7 @@ class NavBarScreen extends GetView<NavbarController> {
                   color: AppColors.appPrimaryColor,
                 ),
               ),
-              label: "Add",
+              label: "Add Order",
             ),
             BottomNavigationBarItem(
               icon: Icon(Iconsax.clock),
@@ -74,7 +72,12 @@ class NavBarScreen extends GetView<NavbarController> {
       body: Obx(
         () => IndexedStack(
           index: controller.currentIndex.value,
-          children: [HomeScreen(), CatalogueScreen(), CreateOrderScreen()],
+          children: [
+            HomeScreen(),
+            CatalogueScreen(),
+            CreateOrderScreen(),
+            OrdersHistoryScreen(),
+          ],
         ),
       ),
     );

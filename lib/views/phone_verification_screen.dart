@@ -112,8 +112,7 @@ class PhoneVerificationScreen extends GetView<PhoneVerificationController> {
                         border: Border.all(color: Colors.redAccent),
                       ),
                     ),
-              context.heightBox((20)),
-
+                    context.heightBox((20)),
                     Center(
                       child: OtpTimerButton(
                         buttonType: ButtonType.text_button,

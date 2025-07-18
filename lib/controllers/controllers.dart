@@ -6,3 +6,7 @@ export './navbar_controller.dart';
 export './home_controller.dart';
 export './catalogue_controller.dart';
 export './create_order_controller.dart';
+export 'select_Product_controller.dart';
+export './confirm_order_controller.dart';
+export './view_products_controller.dart';
+export './order_history_controller.dart';

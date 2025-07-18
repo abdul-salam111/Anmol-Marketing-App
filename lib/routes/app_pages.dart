@@ -1,6 +1,5 @@
 import 'package:anmol_marketing/bindings/create_order_binding.dart';
-import 'package:anmol_marketing/views/catalogue_screen.dart';
-import 'package:anmol_marketing/views/create_order_screen.dart';
+
 import 'package:get/get.dart';
 import '../bindings/bindings.dart';
 import '../views/views.dart';
@@ -47,6 +46,21 @@ class AppPages {
       name: AppRoutes.createOrder,
       page: () => CreateOrderScreen(),
       binding: CreateOrderBinding(),
+    ),
+     GetPage(
+      name: AppRoutes.selectProduct,
+      page: () => SelectProductScreen(),
+      binding: SelectProductBinding(),
+    ),
+      GetPage(
+      name: AppRoutes.confirmOrder,
+      page: () => ConfirmOrderScreen(),
+      binding: ConfirmOrderBinding(),
+    ),
+     GetPage(
+      name: AppRoutes.viewProducts,
+      page: () => ViewProductsScreen(),
+      binding: ViewProductsBinding(),
     ),
   ];
 }

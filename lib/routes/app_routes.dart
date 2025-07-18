@@ -9,5 +9,8 @@ abstract class AppRoutes {
   static const navbar = '/navbar';
   static const catalogue = '/catalogue';
   static const createOrder = '/createOrder';
+  static const selectProduct = '/selectProduct';
+  static const confirmOrder = '/confirmOrder';
+  static const viewProducts = '/viewProducts';
 
 }

@@ -103,7 +103,7 @@ class LoginScreen extends GetView<LoginController> {
                             onPressed: () {
                               // if (controller.loginFormKey.currentState!
                               //     .validate()) {}
-                              Get.toNamed(AppRoutes.navbar);
+                              Get.offAllNamed(AppRoutes.navbar);
                             },
                             backgroundColor: AppColors.appPrimaryColor,
                           ),
