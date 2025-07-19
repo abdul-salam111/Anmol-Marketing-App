@@ -13,7 +13,7 @@ class CatalogueScreen extends GetView<CatalogueController> {
     return UnfocusWrapper(
       child: Scaffold(
         drawer: Drawer(),
-        appBar: CustomAppBar(title: "Cataloge"),
+        appBar: CustomAppBar(title: "Catalogue"),
         body: Padding(
           padding: screenPadding,
           child: Column(
@@ -22,43 +22,66 @@ class CatalogueScreen extends GetView<CatalogueController> {
               CustomSearchField(
                 onChanged: (value) {
                   controller.searchQuery.value = value;
-                  controller.searchCompanies(value);
                 },
               ),
               SizedBox(height: 10),
-              Obx(
-                () => Expanded(
-                  child: controller.filterCompanies.isEmpty
-                      ? Center(child: Text("Not found"))
-                      : ListView.builder(
-                          itemCount: controller.filterCompanies.length,
-                          itemBuilder: (context, index) {
-                            final company = controller.filterCompanies[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: ListTile(
-                                onTap: () {
-                                  Get.toNamed(
-                                    AppRoutes.viewProducts,
-                                    arguments: company,
-                                  );
-                                },
-                                contentPadding: EdgeInsets.zero,
-                                leading: ProductImage(
-                                  imageUrl: company.logoPath,
-                                  width: 50,
-                                  height: 50,
-                                ),
-                                title: Text(
-                                  company.name,
-                                  style: context.bodyLargeStyle,
-                                ),
-                              ),
+              Obx(() {
+                if (controller.isLoading.value) {
+                  return Expanded(
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                if (controller.errorMessage.value.isNotEmpty) {
+                  return Expanded(
+                    child: Center(child: Text(controller.errorMessage.value)),
+                  );
+                }
+
+                if (controller.filterCompanies.isEmpty) {
+                  return Expanded(
+                    child: Center(
+                      child: Text(
+                        controller.searchQuery.value.isEmpty
+                            ? "No companies available"
+                            : "No matching companies found",
+                      ),
+                    ),
+                  );
+                }
+
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount: controller.filterCompanies.length,
+                    itemBuilder: (context, index) {
+                      final company = controller.filterCompanies[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: ListTile(
+                          onTap: () {
+                            Get.toNamed(
+                              AppRoutes.viewProducts,
+                              arguments: company,
                             );
                           },
+                          contentPadding: EdgeInsets.zero,
+                          leading: ProductImage(
+                            imageUrl: company.companyLogo,
+                            width: 50,
+                            height: 50,
+                          ),
+                          title: Text(
+                            company.companyName,
+                            style: context.bodySmallStyle!.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                ),
-              ),
+                      );
+                    },
+                  ),
+                );
+              }),
             ],
           ),
         ),

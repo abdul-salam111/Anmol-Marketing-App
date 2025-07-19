@@ -1,5 +1,41 @@
+import 'package:anmol_marketing/data/database/database_helper.dart';
+import 'package:anmol_marketing/data/models/get_models/get_companies.dart';
+import 'package:anmol_marketing/data/repositories/companies_repo.dart';
 import 'package:get/get.dart';
 
-class NavbarController extends GetxController{
-  RxInt currentIndex=0.obs;
+class NavbarController extends GetxController {
+  RxInt currentIndex = 0.obs;
+  DataService dataService = DataService();
+  RxList<Company> companies = <Company>[].obs;
+  DatabaseHelper databaseHelper = DatabaseHelper();
+
+  Future<void> fetchCompanies() async {
+    try {
+      // First try to get companies from local database
+      final localCompanies = await databaseHelper.getCompanies();
+      
+      if (localCompanies.isNotEmpty) {
+        // If companies exist locally, use them
+        companies.value = localCompanies;
+      } else {
+        // If no local companies, fetch from API
+        final apiCompanies = await dataService.getCompanies();
+        companies.value = apiCompanies;
+        
+        // Store the fetched companies locally
+        for (Company company in apiCompanies) {
+          await databaseHelper.insertCompany(company);
+        }
+      }
+    } catch (e) {
+      print('Error fetching companies: $e');
+      // You might want to add error handling here
+    }
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+     fetchCompanies();
+  }
 }

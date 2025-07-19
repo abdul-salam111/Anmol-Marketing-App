@@ -1,3 +1,3 @@
-class AppImages{
-  static final appLogo="assets/images/app_logo.svg";
+class AppImages {
+  static final appLogo = "assets/images/app_logo.jpeg";
 }

@@ -1,139 +1,76 @@
-import 'package:anmol_marketing/controllers/controllers.dart';
-import 'package:anmol_marketing/core/utils/apptoast.dart';
-import 'package:anmol_marketing/data/models/get_models/cart_product.dart';
+import 'package:anmol_marketing/controllers/create_order_controller.dart';
+import 'package:anmol_marketing/data/database/database_helper.dart';
+import 'package:anmol_marketing/data/models/get_models/get_companies.dart';
+import 'package:anmol_marketing/data/models/get_models/get_products_model.dart';
+import 'package:anmol_marketing/data/models/post_models/create_order.dart';
+import 'package:anmol_marketing/data/repositories/companies_repo.dart';
 import 'package:get/get.dart';
 
 class SelectProductController extends GetxController {
+  RxDouble companyTotal =
+      0.0.obs; // total of the selected products in that company
+  late RxDouble totalAmount; // grand total of overall order
+
+  // Fetch products by company id from api
+  DataService dataService = DataService();
+  RxList<Product> products = <Product>[].obs;
+  RxList<Product> filteredProducts = <Product>[].obs;
+  late Company company;
   RxString searchQuery = "".obs;
 
-  List<Product> allProducts = [
-    Product(
-      name: "Actidil Elixir",
-      pack: "1x10",
-      tradePrice: 150,
-      availableStock: 20,
-    ),
-    Product(
-      name: "Amoxil 250 mg Cap.",
-      pack: "1x10",
-      tradePrice: 150,
-      availableStock: 20,
-    ),
-    Product(
-      name: "Ampiclox Drops",
-      pack: "1x10",
-      tradePrice: 150,
-      availableStock: 20,
-    ),
-    Product(
-      name: "Angised Tablets",
-      pack: "1x10",
-      tradePrice: 150,
-      availableStock: 20,
-    ),
-  ];
+  Future<void> fetchProducts() async {
+    try {
+      products.value = await dataService.getCompanyProducts(
+        int.parse(company.companyId),
+      );
+      filteredProducts.value = products;
+    } catch (e) {
+      print(e);
+    }
+  }
 
-  RxList<Product> filteredProducts = <Product>[].obs;
+  void searchProduct(String query) {
+    searchQuery.value = query.toLowerCase();
+
+    if (query.isEmpty) {
+      // If search is empty, show all products
+      filteredProducts.value = products;
+    } else {
+      // Filter products where productName contains the query (case-insensitive)
+      filteredProducts.value = products.where((product) {
+        return product.productName.toLowerCase().contains(searchQuery.value);
+      }).toList();
+    }
+  }
+
+  final CreateOrderController createOrderController =
+      Get.find<CreateOrderController>();
+  DatabaseHelper databaseHelper = DatabaseHelper();
+  void createOrder(OrdersModel orderModel) async {
+    createOrderController.cartItems.add(orderModel);
+    createOrderController.totalAmount.value += companyTotal.value;
+    createOrderController.totalProducts.value += productQuantities.length;
+    await databaseHelper.deleteCompanyById(int.parse(company.companyId));
+    createOrderController.fetchCompanies();
+    createOrderController.update();
+  }
 
   @override
   void onInit() {
     super.onInit();
-    filteredProducts.assignAll(allProducts); // Initialize with all products
-
-    // Setup debounce for search (300ms delay)
-    debounce(
-      searchQuery.value.obs,
-      (_) => searchProducts(searchQuery.value.toString().trim()),
-      time: const Duration(milliseconds: 300),
-    );
+    company = Get.arguments[0];
+    totalAmount = Get.arguments[1];
+    fetchProducts();
   }
 
-  void searchProducts(String query) {
-    if (query.isEmpty) {
-      filteredProducts.assignAll(allProducts);
-    } else {
-      final results = allProducts
-          .where(
-            (product) =>
-                product.name.toLowerCase().contains(query.toLowerCase()) ||
-                product.pack.toLowerCase().contains(query.toLowerCase()),
-          )
-          .toList();
-      filteredProducts.assignAll(results);
-    }
-  }
+  final RxMap<Product, int> productQuantities = <Product, int>{}.obs;
 
-  RxDouble companyTotal = 0.0.obs;
-  RxDouble orderTotal = 0.0.obs;
-
-  final CreateOrderController createOrderController =
-      Get.find<CreateOrderController>();
-
- void increaseQuantity(Product product) {
-    product.quantity.value++;
-    updateTotals();
-    updateCartTotals();
-    update(); // Notify listeners
-  }
-
-  void decreaseQuantity(Product product) {
-    if (product.quantity.value > 0) {
-      product.quantity.value--;
-      updateTotals();
-      updateCartTotals();
-      update(); // Notify listeners
-    }
-  }
-
-  void updateTotals() {
-    companyTotal.value = filteredProducts.fold(0.0, (sum, product) {
-      return sum + (product.tradePrice * product.quantity.value);
+  void addProductQuantity(Product product, int quantity) {
+    productQuantities[product] = quantity;
+    double total = 0;
+    productQuantities.forEach((product, qty) {
+      total += product.tradePrice * qty;
     });
-    orderTotal.value = companyTotal.value;
+    companyTotal.value = total;
   }
-
-  void updateCartTotals() {
-    final createOrderController = Get.find<CreateOrderController>();
-    
-    // Calculate total products (sum of all quantities)
-    createOrderController.totalProducts.value = filteredProducts.fold(0, (sum, product) {
-      return sum + product.quantity.value;
-    });
-    
-    // Calculate total amount (sum of price * quantity)
-    createOrderController.totalAmount.value = filteredProducts.fold(0.0, (sum, product) {
-      return sum + (product.tradePrice * product.quantity.value);
-    });
-  }
-
-  void addToCart(CartProducts cartProduct) {
-    final createOrderController = Get.find<CreateOrderController>();
-    final exists = createOrderController.cartItems.any(
-      (product) => product.productId == cartProduct.productId,
-    );
-
-    if (!exists) {
-      createOrderController.cartItems.add(cartProduct);
-      updateCartTotals(); // Update totals when adding to cart
-    } else {
-      AppToasts.showErrorToast(Get.context!, "Product already exists");
-    }
-  }
-
-}
-
-class Product {
-  final String name;
-  final String pack;
-  final int tradePrice;
-  final int availableStock;
-  RxInt quantity;
-
-  Product({
-    required this.name,
-    required this.pack,
-    required this.tradePrice,
-    required this.availableStock,
-    int quantity = 0,
-  }) : quantity = quantity.obs;
 }

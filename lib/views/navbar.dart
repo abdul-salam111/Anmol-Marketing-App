@@ -77,6 +77,7 @@ class NavBarScreen extends GetView<NavbarController> {
             CatalogueScreen(),
             CreateOrderScreen(),
             OrdersHistoryScreen(),
+            ProfileScreen(),
           ],
         ),
       ),

@@ -64,7 +64,6 @@ class CreateOrderScreen extends GetView<CreateOrderController> {
               )
             : SizedBox.shrink(),
       ),
-      drawer: Drawer(),
       appBar: CustomAppBar(title: "Create new order"),
       body: Column(
         crossAxisAlignment: crossAxisStart,
@@ -76,160 +75,176 @@ class CreateOrderScreen extends GetView<CreateOrderController> {
                       padding: screenPadding,
                       itemCount: controller.cartItems.length,
                       itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 60,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: AppColors.darkGreyColor,
-                                  ),
+                        return InkWell(
+                          onTap: () {
+                            Get.toNamed(
+                              AppRoutes.selectProduct,
+                              arguments: [
+                                controller.cartItems[index].company,
+                                double.parse(
+                                  controller.cartItems[index].companyTotal!,
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2),
-                                  child: Image.network(
-                                    controller.cartItems[index].productImage ??
-                                        "",
-                                    fit: BoxFit.contain,
-                                  ),
+                                controller.totalAmount,
+                              ],
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Row(
+                              children: [
+                                ProductImage(
+                                  imageUrl: controller
+                                      .cartItems[index]
+                                      .company!
+                                      .companyLogo,
+                                  width: 40,
+                                  height: 40,
                                 ),
-                              ),
-                              SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: crossAxisStart,
-                                  children: [
-                                    Text(
-                                      controller.cartItems[index].productName ??
-                                          "",
-                                      style: context.bodySmallStyle!.copyWith(
-                                        fontWeight: FontWeight.bold,
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: crossAxisStart,
+                                    children: [
+                                      Text(
+                                        controller
+                                            .cartItems[index]
+                                            .company!
+                                            .companyName,
+                                        style: context.bodySmallStyle!.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Row(
-                                      mainAxisAlignment: mainAxisStart,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment: crossAxisStart,
-                                          children: [
-                                            Text(
-                                              "#Products",
-                                              style: context.displayLargeStyle!
-                                                  .copyWith(
-                                                    color: AppColors.greyColor,
-                                                  ),
-                                            ),
-                                            SizedBox(height: 3),
-                                            Text(
-                                              controller
-                                                  .cartItems[index]
-                                                  .productQuantity
-                                                  .toString(),
-                                              style: context.displayLargeStyle!
-                                                  .copyWith(
-                                                    color: AppColors
-                                                        .blackTextColor,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(width: 20),
-                                        Column(
-                                          crossAxisAlignment: crossAxisStart,
-                                          children: [
-                                            Text(
-                                              "Company Total",
-                                              style: context.displayLargeStyle!
-                                                  .copyWith(
-                                                    color: AppColors.greyColor,
-                                                  ),
-                                            ),
-                                            Text(
-                                              "Rs. ${controller.cartItems[index].totalAmount.toString()}",
-                                              style: context.displayLargeStyle!
-                                                  .copyWith(
-                                                    color: AppColors
-                                                        .blackTextColor,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                      SizedBox(height: 5),
+                                      Row(
+                                        mainAxisAlignment: mainAxisStart,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment: crossAxisStart,
+                                            children: [
+                                              Text(
+                                                "#Products",
+                                                style: context
+                                                    .displayLargeStyle!
+                                                    .copyWith(
+                                                      color:
+                                                          AppColors.greyColor,
+                                                    ),
+                                              ),
+                                              SizedBox(height: 3),
+                                              Text(
+                                                controller
+                                                    .cartItems[index]
+                                                    .totalProducts
+                                                    .toString(),
+                                                style: context
+                                                    .displayLargeStyle!
+                                                    .copyWith(
+                                                      color: AppColors
+                                                          .blackTextColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(width: 20),
+                                          Column(
+                                            crossAxisAlignment: crossAxisStart,
+                                            children: [
+                                              Text(
+                                                "Company Total",
+                                                style: context
+                                                    .displayLargeStyle!
+                                                    .copyWith(
+                                                      color:
+                                                          AppColors.greyColor,
+                                                    ),
+                                              ),
+                                              Text(
+                                                "Rs. ${controller.cartItems[index].companyTotal}",
+                                                style: context
+                                                    .displayLargeStyle!
+                                                    .copyWith(
+                                                      color: AppColors
+                                                          .blackTextColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       },
                     ),
                   )
-                : SizedBox.shrink(),
+                : Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text("Please, select company and add products"),
+                    ),
+                  ),
           ),
           SizedBox(height: 5),
-          Obx(
-            () => controller.cartItems.isNotEmpty
-                ? Container(
-                    padding: defaultPadding,
-                    width: double.infinity,
-                    height: 60,
-                    decoration: BoxDecoration(color: Color(0xffDED2FA)),
-                    child: Row(
-                      mainAxisAlignment: mainAxisSpaceAround,
-                      children: [
-                        Column(
-                          crossAxisAlignment: crossAxisCenter,
-                          mainAxisAlignment: mainAxisCenter,
-                          children: [
-                            Text(
-                              "${controller.totalProducts.value}",
-                              style: context.headlineSmallStyle!.copyWith(
-                                color: AppColors.blackTextColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              "Total Products",
-                              style: context.displayLargeStyle!.copyWith(
-                                color: AppColors.greyTextColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: crossAxisCenter,
-                          mainAxisAlignment: mainAxisCenter,
-                          children: [
-                            Text(
-                              "Rs. ${controller.totalAmount.value}",
-                              style: context.headlineSmallStyle!.copyWith(
-                                color: AppColors.blackTextColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              "Total Amount",
-                              style: context.displayLargeStyle!.copyWith(
-                                color: AppColors.greyTextColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+          Container(
+            padding: defaultPadding,
+            width: double.infinity,
+            height: 60,
+            decoration: BoxDecoration(color: Color(0xffDED2FA)),
+            child: Row(
+              mainAxisAlignment: mainAxisSpaceAround,
+              children: [
+                Column(
+                  crossAxisAlignment: crossAxisCenter,
+                  mainAxisAlignment: mainAxisCenter,
+                  children: [
+                    Text(
+                      "${controller.totalProducts.value}",
+                      style: context.headlineSmallStyle!.copyWith(
+                        color: AppColors.blackTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  )
-                : SizedBox.shrink(),
+                    Text(
+                      "Total Products",
+                      style: context.displayLargeStyle!.copyWith(
+                        color: AppColors.greyTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: crossAxisCenter,
+                  mainAxisAlignment: mainAxisCenter,
+                  children: [
+                    Text(
+                      "Rs. ${controller.totalAmount.value == 0 ? 0 : controller.totalAmount.value}",
+                      style: context.headlineSmallStyle!.copyWith(
+                        color: AppColors.blackTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      "Total Amount",
+                      style: context.displayLargeStyle!.copyWith(
+                        color: AppColors.greyTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
+
           SizedBox(height: 30),
           Padding(
             padding: screenPadding,
@@ -250,30 +265,26 @@ class CreateOrderScreen extends GetView<CreateOrderController> {
                   padding: const EdgeInsets.only(top: 10),
                   child: InkWell(
                     onTap: () {
-                      Get.toNamed(AppRoutes.selectProduct);
+                      Get.toNamed(
+                        AppRoutes.selectProduct,
+                        arguments: [
+                          controller.companies[index],
+                          controller.totalAmount,
+                        ],
+                      );
                     },
                     child: Row(
                       children: [
-                        Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: AppColors.darkGreyColor),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: Image.network(
-                              controller.companies[index].logoPath,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
+                        ProductImage(
+                          imageUrl: controller.companies[index].companyLogo,
+                          width: 40,
+                          height: 40,
                         ),
                         SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            controller.companies[index].name,
-                            style: context.bodyMediumStyle!.copyWith(
+                            controller.companies[index].companyName,
+                            style: context.bodySmallStyle!.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),

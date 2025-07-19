@@ -2,11 +2,12 @@
 
 import 'package:anmol_marketing/controllers/controllers.dart';
 import 'package:anmol_marketing/core/core.dart';
-import 'package:anmol_marketing/data/models/get_models/cart_product.dart';
-import 'package:anmol_marketing/routes/app_routes.dart';
+import 'package:anmol_marketing/data/models/post_models/create_order.dart';
 import 'package:anmol_marketing/views/widgets/widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../data/models/get_models/get_products_model.dart';
 
 class SelectProductScreen extends GetView<SelectProductController> {
   const SelectProductScreen({super.key});
@@ -23,7 +24,7 @@ class SelectProductScreen extends GetView<SelectProductController> {
               padding: screenPadding,
               child: CustomSearchField(
                 onChanged: (value) {
-                  controller.searchProducts(value);
+                  controller.searchProduct(value);
                 },
               ),
             ),
@@ -43,18 +44,15 @@ class SelectProductScreen extends GetView<SelectProductController> {
                         decoration: BoxDecoration(),
                         child: Row(
                           children: [
-                            ProductImage(
-                              imageUrl:
-                                  "https://dawailo.pk/wp-content/uploads/2021/07/Screenshot1-6.png",
-                            ),
+                            ProductImage(imageUrl: product.productImage),
                             SizedBox(width: 10),
 
                             Column(
                               crossAxisAlignment: crossAxisStart,
                               children: [
                                 Text(
-                                  product.name,
-                                  style: context.bodyMediumStyle!.copyWith(
+                                  product.productName,
+                                  style: context.bodySmallStyle!.copyWith(
                                     color: AppColors.blackTextColor,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -106,7 +104,7 @@ class SelectProductScreen extends GetView<SelectProductController> {
                                     ),
                                     SizedBox(width: 5),
                                     Text(
-                                      product.availableStock.toString(),
+                                      product.stock.toString(),
                                       style: context.bodySmallStyle!.copyWith(
                                         color: AppColors.blackTextColor,
                                         fontWeight: FontWeight.bold,
@@ -128,7 +126,8 @@ class SelectProductScreen extends GetView<SelectProductController> {
                               ),
                               child: Obx(
                                 () => Text(
-                                  product.quantity.toString(),
+                                  controller.productQuantities[product]
+                                      .toString(),
                                   style: context.bodySmallStyle!.copyWith(
                                     color: AppColors.darkGreyColor,
                                   ),
@@ -186,7 +185,7 @@ class SelectProductScreen extends GetView<SelectProductController> {
                       SizedBox(height: 10),
                       Obx(
                         () => Text(
-                          "Rs. ${controller.orderTotal.value}",
+                          "Rs. ${controller.totalAmount.value}",
                           style: context.bodyMediumStyle!.copyWith(
                             color: AppColors.appPrimaryColor,
                           ),
@@ -199,7 +198,16 @@ class SelectProductScreen extends GetView<SelectProductController> {
             ),
             InkWell(
               onTap: () {
-                Get.toNamed(AppRoutes.confirmOrder);
+                // Get.toNamed(AppRoutes.confirmOrder);
+                controller.createOrder(
+                  OrdersModel(
+                    products: [],
+                    company: controller.company,
+                    companyTotal: controller.companyTotal.toString(),
+                    totalProducts: controller.productQuantities.length
+                        .toString(),
+                  ),
+                );
               },
               child: Container(
                 height: 50,
@@ -223,14 +231,17 @@ class SelectProductScreen extends GetView<SelectProductController> {
   }
 
   void showProductDetails(BuildContext context, Product product) {
-    final controller = Get.find<SelectProductController>();
+    final int existingQty = controller.productQuantities[product] ?? 0;
+    final TextEditingController quantityController = TextEditingController(
+      text: existingQty > 0 ? existingQty.toString() : '',
+    );
 
     showGeneralDialog(
       context: context,
-      barrierLabel: product.name,
+      barrierLabel: product.productName,
       barrierDismissible: true,
       barrierColor: Colors.black.withOpacity(0.5),
-      transitionDuration: const Duration(milliseconds: 100),
+      transitionDuration: const Duration(milliseconds: 150),
       pageBuilder: (_, __, ___) => const SizedBox.shrink(),
       transitionBuilder: (_, anim, __, ___) {
         return Transform.scale(
@@ -238,80 +249,95 @@ class SelectProductScreen extends GetView<SelectProductController> {
           child: Opacity(
             opacity: anim.value,
             child: Center(
-              child: Container(
-                width: 300,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      product.name,
-                      style: context.bodyMediumStyle!.copyWith(
-                        fontWeight: FontWeight.bold,
+              child: Material(
+                type: MaterialType.transparency,
+                child: Container(
+                  width: 320,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        product.productName,
+                        style: context.bodyMediumStyle!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    ProductImage(
-                      imageUrl:
-                          "https://dawailo.pk/wp-content/uploads/2021/07/Screenshot1-6.png",
-                      width: context.screenWidth * 0.25,
-                      height: context.screenHeight * 0.2,
-                    ),
-                    const SizedBox(height: 2),
-                    Obx(
-                      () => Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      const SizedBox(height: 10),
+                      CachedNetworkImage(imageUrl: product.productImage),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          IconButton(
-                            icon: const Icon(Icons.remove_circle_outline),
-                            onPressed: () =>
-                                controller.decreaseQuantity(product),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              product.quantity.value.toString(),
-                              style: context.bodyMediumStyle!.copyWith(
-                                fontWeight: FontWeight.bold,
+                          Row(
+                            children: [
+                              Text(
+                                "Pack: ",
+                                style: context.bodySmallStyle!.copyWith(
+                                  color: AppColors.darkGreyColor,
+                                ),
                               ),
-                            ),
+                              const SizedBox(width: 5),
+                              Text(
+                                product.pack,
+                                style: context.bodySmallStyle!.copyWith(
+                                  color: AppColors.blackTextColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.add_circle_outline),
-                            onPressed: () =>
-                                controller.increaseQuantity(product),
+                          Row(
+                            children: [
+                              Text(
+                                "T.P: ",
+                                style: context.bodySmallStyle!.copyWith(
+                                  color: AppColors.darkGreyColor,
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                product.tradePrice.toString(),
+                                style: context.bodySmallStyle!.copyWith(
+                                  color: AppColors.blackTextColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        controller.addToCart(
-                          CartProducts(
-                            productId: product.name,
-                            productImage:
-                                "https://dawailo.pk/wp-content/uploads/2021/07/Screenshot1-6.png",
-                            productName: product.name,
-                            productQuantity: product.quantity.value.toString(),
-                            totalAmount: controller.orderTotal.value.toString(),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: TextField(
+                          controller: quantityController,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            labelText: "Enter Quantity",
+                            border: OutlineInputBorder(),
                           ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      child: const Text("Add"),
-                    ),
-                  ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          final qty =
+                              int.tryParse(quantityController.text) ?? 0;
+                          if (qty > 0) {
+                            controller.addProductQuantity(product, qty);
+                            Navigator.of(context).pop();
+                          }
+                        },
+                        child: const Text("Add"),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

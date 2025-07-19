@@ -15,6 +15,7 @@ class LoginScreen extends GetView<LoginController> {
 
   @override
   Widget build(BuildContext context) {
+
     return UnfocusWrapper(
       child: Scaffold(
         body: SafeArea(
@@ -25,26 +26,18 @@ class LoginScreen extends GetView<LoginController> {
                 crossAxisAlignment: crossAxisStart,
                 children: [
                   context.heightBox((context.screenHeight * 0.05)),
-                  Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(100),
-                      child: AppLogo(
-                        width: context.screenWidth * 0.2,
-                        height: context.screenHeight * 0.2,
-                      ),
-                    ),
-                  ),
+                  Center(child: AppLogo(radius: 70)),
                   context.heightBox((context.screenHeight * 0.1)),
                   Text(
                     "Let's Sign in",
-                    style: context.headlineMediumStyle!.copyWith(
+                    style: context.headlineSmallStyle!.copyWith(
                       color: AppColors.appTertiaryColor,
                     ),
                   ),
                   context.heightBox((3)),
                   Text(
                     "Fill the details below to continue.",
-                    style: context.bodySmallStyle!.copyWith(
+                    style: context.displayLargeStyle!.copyWith(
                       color: AppColors.greyTextColor,
                     ),
                   ),
@@ -87,7 +80,7 @@ class LoginScreen extends GetView<LoginController> {
                             onPressed: () {},
                             child: Text(
                               "Forgot Password?",
-                              style: context.bodySmallStyle!.copyWith(
+                              style: context.displayLargeStyle!.copyWith(
                                 color: AppColors.appPrimaryColor,
                               ),
                             ),
@@ -112,13 +105,13 @@ class LoginScreen extends GetView<LoginController> {
                         RichText(
                           text: TextSpan(
                             text: "Don’t have an account? ",
-                            style: context.bodySmallStyle!.copyWith(
+                            style: context.displayLargeStyle!.copyWith(
                               color: AppColors.greyTextColor,
                             ),
                             children: [
                               TextSpan(
                                 text: "Create New Account",
-                                style: context.bodySmallStyle!.copyWith(
+                                style: context.displayLargeStyle!.copyWith(
                                   color: AppColors.appPrimaryColor,
                                   fontWeight: FontWeight.bold,
                                 ),

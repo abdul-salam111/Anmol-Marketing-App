@@ -2,9 +2,6 @@ import 'package:anmol_marketing/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 
-
-
-
 class CustomSearchField extends StatelessWidget {
   final String hintText;
   final TextEditingController? controller;
@@ -24,6 +21,7 @@ class CustomSearchField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      autofocus: false,
       controller: controller,
       onChanged: onChanged,
       onTap: onTap,
@@ -31,7 +29,9 @@ class CustomSearchField extends StatelessWidget {
       style: context.bodyMediumStyle!.copyWith(color: AppColors.greyColor),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: context.bodyMediumStyle!.copyWith(color: AppColors.greyColor),
+        hintStyle: context.bodyMediumStyle!.copyWith(
+          color: AppColors.greyColor,
+        ),
         prefixIcon: Icon(Iconsax.search_normal, color: AppColors.greyColor),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),

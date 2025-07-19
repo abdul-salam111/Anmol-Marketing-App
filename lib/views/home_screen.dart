@@ -48,12 +48,12 @@ class HomeScreen extends GetView<HomeController> {
                             ),
                             child: Text(
                               "Last Order",
-                              style: context.bodySmallStyle!.copyWith(
+                              style: context.displayLargeStyle!.copyWith(
                                 color: AppColors.whiteTextColor,
                               ),
                             ),
                           ),
-                          context.heightBox(20),
+                          context.heightBox(25),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -157,23 +157,22 @@ class HomeScreen extends GetView<HomeController> {
                                 children: [
                                   Text(
                                     'GlaxoSmithKline Pharma',
-                                    style: context.bodyMediumStyle!.copyWith(
+                                    style: context.bodySmallStyle!.copyWith(
                                       color: AppColors.whiteTextColor,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   Text(
                                     "Current Balance",
-                                    style: context.bodySmallStyle!.copyWith(
+                                    style: context.displayLargeStyle!.copyWith(
                                       color: AppColors.darkGreyColor,
                                     ),
                                   ),
                                   Text(
                                     'Rs. 45,000',
-                                    style: context.bodyLargeStyle!.copyWith(
+                                    style: context.bodyMediumStyle!.copyWith(
                                       color: AppColors.whiteTextColor,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 20,
                                     ),
                                   ),
                                 ],
@@ -193,6 +192,7 @@ class HomeScreen extends GetView<HomeController> {
                   itemCount: 6,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
+                    mainAxisExtent: 120,
                   ),
                   itemBuilder: (context, index) {
                     final cardDetails = controller.cardItems[index];
@@ -200,27 +200,26 @@ class HomeScreen extends GetView<HomeController> {
                       onTap: cardDetails.onTap,
                       child: Container(
                         margin: EdgeInsets.all(8),
-                        width: context.screenWidth / 2,
-                        height: context.screenHeight * 0.1,
+
                         decoration: BoxDecoration(
                           color: cardDetails.cardColor,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(
                           child: Column(
                             mainAxisAlignment: mainAxisCenter,
                             children: [
-                              Icon(
+                              Image.asset(
                                 cardDetails.cardIcon,
-                                size: 50,
-                                color: Colors.white,
+                                width: 50,
+                                height: 50,
                               ),
                               SizedBox(height: 10),
                               Text(
                                 cardDetails.cardName,
-                                style: context.bodyMediumStyle!.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold
+                                style: context.bodySmallStyle!.copyWith(
+                                  color: cardDetails.textColor,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],

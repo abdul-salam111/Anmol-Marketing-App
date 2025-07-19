@@ -1,80 +1,49 @@
-
-import 'package:anmol_marketing/controllers/catalogue_controller.dart';
+import 'package:anmol_marketing/data/models/get_models/get_companies.dart';
+import 'package:anmol_marketing/data/models/get_models/get_products_model.dart';
+import 'package:anmol_marketing/data/repositories/companies_repo.dart';
 import 'package:get/get.dart';
 
 class ViewProductsController extends GetxController {
-  RxString searchQuery="".obs;
-  
-  List<ViewProduct> allProducts = [
-    ViewProduct(
-      name: "Actidil Elixir",
-      pack: "1x10",
-      tradePrice: 150,
-      availableStock: 20,
-    ),
-    ViewProduct(
-      name: "Amoxil 250 mg Cap.",
-      pack: "1x10",
-      tradePrice: 150,
-      availableStock: 20,
-    ),
-    ViewProduct(
-      name: "Ampiclox Drops",
-      pack: "1x10",
-      tradePrice: 150,
-      availableStock: 20,
-    ),
-    ViewProduct(
-      name: "Angised Tablets",
-      pack: "1x10",
-      tradePrice: 150,
-      availableStock: 20,
-    ),
-  ];
+  // Fetch products by company id from api
+  DataService dataService = DataService();
+  RxList<Product> products = <Product>[].obs;
+  RxList<Product> filteredProducts = <Product>[].obs; // For search results
+  late Company company;
+  RxString searchQuery = "".obs;
 
-  RxList<ViewProduct> filteredProducts = <ViewProduct>[].obs;
-  late CompanyModel company;
-  @override
-  void onInit() {
-    super.onInit();
-    company=Get.arguments;
-    filteredProducts.assignAll(allProducts); // Initialize with all products
-    
-    // Setup debounce for search (300ms delay)
-    debounce(
-      searchQuery.value.obs,
-      (_) => searchProducts(searchQuery.value.toString().trim()),
-      time: const Duration(milliseconds: 300),
-    );
-  }
-
-  void searchProducts(String query) {
-    if (query.isEmpty) {
-      filteredProducts.assignAll(allProducts);
-    } else {
-      final results = allProducts.where((product) => 
-        product.name.toLowerCase().contains(query.toLowerCase()) ||
-        product.pack.toLowerCase().contains(query.toLowerCase())
-      ).toList();
-      filteredProducts.assignAll(results);
+  Future<void> fetchProducts() async {
+    try {
+      products.value = await dataService.getCompanyProducts(int.parse(company.companyId));
+      filteredProducts.addAll(products);
+    } catch (e) {
+      print(e);
     }
   }
 
- 
-}
+  void searchProduct(String query) {
+    searchQuery.value = query.toLowerCase();
 
-class ViewProduct {
-  final String name;
-  final String pack;
-  final int tradePrice;
-  final int availableStock;
-  int quantity;
+    if (query.isEmpty) {
+      // If search is empty, show all products
+      filteredProducts.value = products;
+    } else {
+      // Filter products where productName contains the query (case-insensitive)
+      filteredProducts.value = products.where((product) {
+        return product.productName.toLowerCase().contains(searchQuery.value);
+      }).toList();
+    }
+  }
 
-  ViewProduct({
-    required this.name,
-    required this.pack,
-    required this.tradePrice,
-    required this.availableStock,
-    this.quantity = 0,
-  });
+  @override
+  void onInit() {
+    super.onInit();
+    company = Get.arguments;
+    fetchProducts();
+    // Setup debounce for search (300ms delay)
+    debounce(
+      searchQuery.value.obs,
+      (_) => searchProduct(searchQuery.value.toString().trim()),
+      time: const Duration(milliseconds: 300),
+    );
+  }
 }

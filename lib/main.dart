@@ -1,14 +1,16 @@
 import 'package:anmol_marketing/core/theme/theme.dart';
+import 'package:anmol_marketing/data/database/database.dart';
+// import 'package:anmol_marketing/data/database/database.dart';
 import 'package:anmol_marketing/routes/app_pages.dart';
 import 'package:anmol_marketing/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
-void main() {
+AnmolMarketingDatabase? anmolMarketingDatabase;
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-
+  anmolMarketingDatabase = AnmolMarketingDatabase();
+  await anmolMarketingDatabase!.initializeDatabase();
   runApp(const MyApp());
 }
 
@@ -22,7 +24,7 @@ class MyApp extends StatelessWidget {
       theme: AppThemes.lightTheme,
       themeMode: ThemeMode.light,
       darkTheme: AppThemes.darkTheme,
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.splash,
       getPages: AppPages.routes,
     );
   }

@@ -1,6 +1,3 @@
-
-
-import 'package:anmol_marketing/views/widgets/app_logo.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/splash_controller.dart';
@@ -11,15 +8,10 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   Get.put(SplashController());
+    Get.put(SplashController());
     return Scaffold(
       backgroundColor: AppColors.appDarkThemeBackground,
-      body: Center(
-        child: AppLogo(
-          width: context.screenWidth * 0.3,
-          height: context.screenHeight * 0.3,
-        ),
-      ),
+      body: Center(child: Image.asset(AppImages.appLogo)),
     );
   }
 }

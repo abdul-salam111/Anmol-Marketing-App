@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
@@ -53,139 +51,141 @@ class CustomTextFormField extends StatelessWidget {
       children: [
         if (label != null)
           RichText(
-              text: TextSpan(children: [
+            text: TextSpan(
+              children: [
                 TextSpan(
                   text: label!,
-                  style: context.bodyMediumStyle!.copyWith(
-                      color: labelColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: labelfontSize.toDouble()),
+                  style: context.bodySmallStyle!.copyWith(
+                    color: labelColor,
+    
+                    fontSize: labelfontSize.toDouble(),
+                  ),
                 ),
                 isrequired
                     ? TextSpan(
-                  text: "*",
-                  style: context.bodyMediumStyle!.copyWith(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                      fontSize: labelfontSize.toDouble()),
-                )
+                        text: "*",
+                        style: context.bodyMediumStyle!.copyWith(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                          fontSize: labelfontSize.toDouble(),
+                        ),
+                      )
                     : TextSpan(),
-              ])),
+              ],
+            ),
+          ),
         context.heightBox((5)),
         obscureText
             ? Obx(
-              () => TextFormField(
-            textCapitalization: TextCapitalization.words,
-            readOnly: readonly,
-            style: context.bodySmallStyle,
-            controller: controller,
-            obscureText: obscureText ? isObscure.value : false,
-            keyboardType: keyboardType,
-            maxLines: obscureText
-                ? 1
-                : maxLines, // Force single line if obscureText is true
-            decoration: InputDecoration(
-              hintStyle: context.bodySmallStyle!
-                  .copyWith(color: AppColors.greyTextColor),
-              hintText: hintText,
-              prefixIcon: prefixIcon != null
-                  ? Icon(
-                prefixIcon,
-                color: AppColors.greyColor,
-              )
-                  : null,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: borderColor,
+                () => TextFormField(
+                  autofocus: false,
+                  textCapitalization: TextCapitalization.words,
+                  readOnly: readonly,
+                  style: context.bodySmallStyle,
+                  controller: controller,
+                  obscureText: obscureText ? isObscure.value : false,
+                  keyboardType: keyboardType,
+                  maxLines: obscureText
+                      ? 1
+                      : maxLines, // Force single line if obscureText is true
+                  decoration: InputDecoration(
+                    hintStyle: context.bodySmallStyle!.copyWith(
+                      color: AppColors.greyTextColor,
+                    ),
+                    hintText: hintText,
+                    prefixIcon: prefixIcon != null
+                        ? Icon(prefixIcon, color: AppColors.greyColor, size: 20)
+                        : null,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: borderColor),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    fillColor: fillColor,
+                    filled: true,
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: AppColors.greyColor,
+                        width: 2,
+                      ),
+                    ),
+                    contentPadding: const EdgeInsets.only(left: 10),
+                    suffixIcon: obscureText
+                        ? IconButton(
+                            icon: Icon(
+                              isObscure.value ? Iconsax.eye_slash : Iconsax.eye,
+                              color: AppColors.greyColor,
+                              size: 20,
+                            ),
+                            onPressed: () {
+                              isObscure
+                                  .toggle(); // Toggle the value of isObscure
+                            },
+                          )
+                        : null,
                   ),
-                  borderRadius: BorderRadius.circular(10)),
-              fillColor: fillColor,
-              filled: true,
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: AppColors.greyColor,
-                  width: 2,
+                  validator: validator,
+                  onChanged: onChanged,
+                  onTap: onTap,
                 ),
-              ),
-              contentPadding: const EdgeInsets.only(left: 10),
-              suffixIcon: obscureText
-                  ? IconButton(
-                icon: Icon(
-                  isObscure.value ? Iconsax.eye_slash : Iconsax.eye,
-                  color: AppColors.greyColor,
-                ),
-                onPressed: () {
-                  isObscure
-                      .toggle(); // Toggle the value of isObscure
-                },
               )
-                  : null,
-            ),
-            validator: validator,
-            onChanged: onChanged,
-            onTap: onTap,
-          ),
-        )
             : TextFormField(
-          textCapitalization: TextCapitalization.words,
-          readOnly: readonly,
-          style: context.bodySmallStyle,
-          controller: controller,
-          obscureText: obscureText ? isObscure.value : false,
-          keyboardType: keyboardType,
-          maxLines: obscureText
-              ? 1
-              : maxLines, // Force single line if obscureText is true
-          decoration: InputDecoration(
-            hintStyle: context.bodySmallStyle!
-                .copyWith(color: AppColors.greyColor),
-            hintText: hintText,
-            prefixIcon: prefixIcon != null
-                ? Icon(
-              prefixIcon,
-              color: AppColors.greyColor,
-            )
-                : null,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            contentPadding: const EdgeInsets.only(left: 10),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(
-                color: AppColors.greyColor,
-                width: 2,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: borderColor,
+                autofocus: false,
+                textCapitalization: TextCapitalization.words,
+                readOnly: readonly,
+                style: context.bodySmallStyle,
+                controller: controller,
+                obscureText: obscureText ? isObscure.value : false,
+                keyboardType: keyboardType,
+                maxLines: obscureText
+                    ? 1
+                    : maxLines, // Force single line if obscureText is true
+                decoration: InputDecoration(
+                  hintStyle: context.bodySmallStyle!.copyWith(
+                    color: AppColors.greyColor,
+                  ),
+                  hintText: hintText,
+                  prefixIcon: prefixIcon != null
+                      ? Icon(prefixIcon, color: AppColors.greyColor, size: 20)
+                      : null,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  contentPadding: const EdgeInsets.only(left: 10),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: AppColors.greyColor,
+                      width: 2,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: borderColor),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  fillColor: fillColor,
+                  filled: true,
+                  suffixIcon: obscureText
+                      ? IconButton(
+                          icon: Icon(
+                            isObscure.value
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            color: AppColors.greyColor,
+                          ),
+                          onPressed: () {
+                            isObscure.toggle(); // Toggle the value of isObscure
+                          },
+                        )
+                      : null,
                 ),
-                borderRadius: BorderRadius.circular(10)),
-            fillColor: fillColor,
-            filled: true,
-            suffixIcon: obscureText
-                ? IconButton(
-              icon: Icon(
-                isObscure.value
-                    ? Icons.visibility_off
-                    : Icons.visibility,
-                color: AppColors.greyColor,
+                validator: validator,
+                onChanged: onChanged,
+                onTap: onTap,
               ),
-              onPressed: () {
-                isObscure.toggle(); // Toggle the value of isObscure
-              },
-            )
-                : null,
-          ),
-          validator: validator,
-          onChanged: onChanged,
-          onTap: onTap,
-        ),
       ],
     );
   }

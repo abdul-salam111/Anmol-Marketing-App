@@ -40,8 +40,7 @@ class PhoneVerificationScreen extends GetView<PhoneVerificationController> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(100),
                   child: AppLogo(
-                    width: context.screenWidth * 0.2,
-                    height: context.screenHeight * 0.2,
+                   radius: 30,
                   ),
                 ),
               ),

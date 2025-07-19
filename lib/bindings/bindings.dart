@@ -9,3 +9,4 @@ export './select_company_binding.dart';
 export './confirm_order_binding.dart';
 export './view_products_binding.dart';
 export './order_history_binding.dart';
+export './profiel_binding.dart';

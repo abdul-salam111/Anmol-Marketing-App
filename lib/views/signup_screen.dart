@@ -30,28 +30,19 @@ class SignupScreen extends GetView<SignupController> {
               child: Column(
                 crossAxisAlignment: crossAxisStart,
                 children: [
-                  // context.heightBox((context.screenHeight * 0.05)),
-                  Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(100),
-                      child: AppLogo(
-                        width: context.screenWidth * 0.15,
-                        height: context.screenHeight * 0.15,
-                      ),
-                    ),
-                  ),
+                  Center(child: AppLogo(radius: 50)),
                   context.heightBox((context.screenHeight * 0.02)),
 
                   Text(
                     "Create an account",
-                    style: context.headlineMediumStyle!.copyWith(
+                    style: context.headlineSmallStyle!.copyWith(
                       color: AppColors.appTertiaryColor,
                     ),
                   ),
                   context.heightBox((3)),
                   Text(
                     "Fill the details below to continue.",
-                    style: context.bodySmallStyle!.copyWith(
+                    style: context.displayLargeStyle!.copyWith(
                       color: AppColors.greyTextColor,
                     ),
                   ),
@@ -240,13 +231,13 @@ class SignupScreen extends GetView<SignupController> {
                         RichText(
                           text: TextSpan(
                             text: "Have an account? ",
-                            style: context.bodySmallStyle!.copyWith(
+                            style: context.displayLargeStyle!.copyWith(
                               color: AppColors.greyTextColor,
                             ),
                             children: [
                               TextSpan(
                                 text: "Sign in",
-                                style: context.bodySmallStyle!.copyWith(
+                                style: context.displayLargeStyle!.copyWith(
                                   color: AppColors.appPrimaryColor,
                                   fontWeight: FontWeight.bold,
                                 ),
