@@ -77,13 +77,10 @@ class ProfileScreen extends GetView<ProfileController> {
 
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.3), // Shadow color
-                          spreadRadius: 2, // How much the shadow spreads
-                          blurRadius: 5, // Softness of the shadow
-                          offset: Offset(
-                            0,
-                            3,
-                          ), // Position of the shadow (horizontal, vertical)
+                          color: Colors.grey.withOpacity(0.3),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
                         ),
                       ],
                     ),

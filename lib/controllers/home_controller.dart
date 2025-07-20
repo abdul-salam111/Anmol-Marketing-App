@@ -1,8 +1,8 @@
 import 'package:anmol_marketing/controllers/navbar_controller.dart';
 import 'package:anmol_marketing/core/core.dart';
+import 'package:anmol_marketing/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
 
 class HomeController extends GetxController {
   final NavbarController navbarController = Get.find<NavbarController>();
@@ -27,18 +27,23 @@ class HomeController extends GetxController {
         cardIcon: AppIcons.claimicon,
         cardName: "Expiry Claims",
         onTap: () {
-          
+          Get.toNamed(AppRoutes.expiryClaim);
         },
         textColor: Colors.orange,
       ),
       CardModel(
-        cardColor: const Color(0xff4FC3F7).withAlpha(((0.3) * 255).toInt()),
+        cardColor: const Color.fromARGB(
+          255,
+          12,
+          90,
+          225,
+        ).withAlpha(((0.3) * 255).toInt()),
         cardIcon: AppIcons.myorders,
         cardName: "My Orders",
         onTap: () {
           navbarController.currentIndex.value = 3;
         },
-        textColor: const Color(0xff4FC3F7),
+        textColor: const Color.fromARGB(255, 12, 90, 225),
       ),
       CardModel(
         cardColor: const Color(0xffFF8587).withAlpha(((0.3) * 255).toInt()),
@@ -53,17 +58,19 @@ class HomeController extends GetxController {
         cardColor: const Color(0xff81C784).withAlpha(((0.3) * 255).toInt()),
         cardIcon: AppIcons.statementsicon,
         cardName: "A/C Statements",
-        onTap: () {},
+        onTap: () {
+          Get.toNamed(AppRoutes.acStatements);
+        },
         textColor: const Color(0xff81C784),
       ),
       CardModel(
-        cardColor: const Color(0xffBA68C8).withAlpha(((0.3) * 255).toInt()),
+        cardColor: Colors.cyan.withAlpha(((0.3) * 255).toInt()),
         cardIcon: AppIcons.catalogicon,
         cardName: "Product Catalog",
         onTap: () {
           navbarController.currentIndex.value = 1;
         },
-        textColor: const Color(0xffBA68C8),
+        textColor: Colors.cyan,
       ),
     ];
   }

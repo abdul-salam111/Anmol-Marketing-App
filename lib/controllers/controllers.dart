@@ -11,3 +11,5 @@ export './confirm_order_controller.dart';
 export './view_products_controller.dart';
 export './order_history_controller.dart';
 export './profile_controller.dart';
+export './expiry_claim_controller.dart';
+export './ac_statements_controller.dart';

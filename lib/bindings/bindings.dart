@@ -10,3 +10,5 @@ export './confirm_order_binding.dart';
 export './view_products_binding.dart';
 export './order_history_binding.dart';
 export './profiel_binding.dart';
+export './expiry_claim_binding.dart';
+export './ac_statements_binding.dart';

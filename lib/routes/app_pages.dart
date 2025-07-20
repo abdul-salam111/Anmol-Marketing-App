@@ -1,4 +1,5 @@
 import 'package:anmol_marketing/bindings/create_order_binding.dart';
+import 'package:anmol_marketing/views/ac_statements_screen.dart';
 
 import 'package:get/get.dart';
 import '../bindings/bindings.dart';
@@ -47,20 +48,30 @@ class AppPages {
       page: () => CreateOrderScreen(),
       binding: CreateOrderBinding(),
     ),
-     GetPage(
+    GetPage(
       name: AppRoutes.selectProduct,
       page: () => SelectProductScreen(),
       binding: SelectProductBinding(),
     ),
-      GetPage(
+    GetPage(
       name: AppRoutes.confirmOrder,
       page: () => ConfirmOrderScreen(),
       binding: ConfirmOrderBinding(),
     ),
-     GetPage(
+    GetPage(
       name: AppRoutes.viewProducts,
       page: () => ViewProductsScreen(),
       binding: ViewProductsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.expiryClaim,
+      page: () => ExpairyClaimScreen(),
+      binding: ExpiryClaimBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.acStatements,
+      page: () => AcStatementsScreen(),
+      binding: AcStatementsBinding(),
     ),
   ];
 }

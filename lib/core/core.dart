@@ -8,3 +8,4 @@ export './constants/physics.dart';
 export './constants/appConts.dart';
 export './utils/extensions.dart';
 export './utils/unfocus_wrapper.dart';
+export './utils/url_launcher.dart';

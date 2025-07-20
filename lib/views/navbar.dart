@@ -1,3 +1,4 @@
+// ignore_for_file: deprecated_member_use
 import 'package:anmol_marketing/controllers/controllers.dart';
 import 'package:anmol_marketing/core/core.dart';
 import 'package:anmol_marketing/views/views.dart';
@@ -10,75 +11,82 @@ class NavBarScreen extends GetView<NavbarController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // floatingActionButton: FloatingActionButton(
-      //   backgroundColor: AppColors.appLightThemeBackground,
-      //   elevation:0 ,
-      //   onPressed: () {},
-      //   child: Container(
-      //     width: 50,
-      //     height: 50,
-      //     decoration: BoxDecoration(
-      //       color: AppColors.appLightThemeBackground,
-      //       border: Border.all(color: AppColors.appPrimaryColor),
-      //       borderRadius: BorderRadius.circular(50),
-      //     ),
-      //     child: Icon(Iconsax.add, size: 30, color: AppColors.appPrimaryColor),
-      //   ),
-      // ),
-      bottomNavigationBar: Obx(
-        () => BottomNavigationBar(
-          currentIndex: controller.currentIndex.value,
-          onTap: (index) {
-            controller.currentIndex.value = index;
-          },
-          selectedItemColor: AppColors.appPrimaryColor,
-          type: BottomNavigationBarType.fixed,
-          showUnselectedLabels: false,
-          backgroundColor: AppColors.appLightThemeBackground,
+    return PopScope(
+      onPopInvoked: (didPop) {},
+      canPop: false,
+      child: Scaffold(
+        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        // floatingActionButton: FloatingActionButton(
+        //   backgroundColor: AppColors.appLightThemeBackground,
+        //   elevation:0 ,
+        //   onPressed: () {},
+        //   child: Container(
+        //     width: 50,
+        //     height: 50,
+        //     decoration: BoxDecoration(
+        //       color: AppColors.appLightThemeBackground,
+        //       border: Border.all(color: AppColors.appPrimaryColor),
+        //       borderRadius: BorderRadius.circular(50),
+        //     ),
+        //     child: Icon(Iconsax.add, size: 30, color: AppColors.appPrimaryColor),
+        //   ),
+        // ),
+        bottomNavigationBar: Obx(
+          () => BottomNavigationBar(
+            currentIndex: controller.currentIndex.value,
+            onTap: (index) {
+              controller.currentIndex.value = index;
+            },
+            selectedItemColor: AppColors.appPrimaryColor,
+            type: BottomNavigationBarType.fixed,
+            showUnselectedLabels: false,
+            backgroundColor: AppColors.appLightThemeBackground,
 
-          items: [
-            BottomNavigationBarItem(icon: Icon(Iconsax.home), label: "Home"),
-            BottomNavigationBarItem(
-              icon: Icon(Iconsax.category),
-              label: "Cataloge",
-            ),
-            BottomNavigationBarItem(
-              icon: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: AppColors.appLightThemeBackground,
-                  border: Border.all(color: AppColors.appPrimaryColor),
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                child: Icon(
-                  Iconsax.add,
-                  size: 30,
-                  color: AppColors.appPrimaryColor,
-                ),
+            items: [
+              BottomNavigationBarItem(icon: Icon(Iconsax.home), label: "Home"),
+              BottomNavigationBarItem(
+                icon: Icon(Iconsax.category),
+                label: "Cataloge",
               ),
-              label: "Add Order",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Iconsax.clock),
-              label: "History",
-            ),
-            BottomNavigationBarItem(icon: Icon(Iconsax.user), label: "Profile"),
-          ],
+              BottomNavigationBarItem(
+                icon: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: AppColors.appLightThemeBackground,
+                    border: Border.all(color: AppColors.appPrimaryColor),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Icon(
+                    Iconsax.add,
+                    size: 30,
+                    color: AppColors.appPrimaryColor,
+                  ),
+                ),
+                label: "Add Order",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Iconsax.clock),
+                label: "History",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Iconsax.user),
+                label: "Profile",
+              ),
+            ],
+          ),
         ),
-      ),
-      body: Obx(
-        () => IndexedStack(
-          index: controller.currentIndex.value,
-          children: [
-            HomeScreen(),
-            CatalogueScreen(),
-            CreateOrderScreen(),
-            OrdersHistoryScreen(),
-            ProfileScreen(),
-          ],
+        body: Obx(
+          () => IndexedStack(
+            index: controller.currentIndex.value,
+            children: [
+              HomeScreen(),
+              CatalogueScreen(),
+              CreateOrderScreen(),
+              OrdersHistoryScreen(),
+              ProfileScreen(),
+            ],
+          ),
         ),
       ),
     );

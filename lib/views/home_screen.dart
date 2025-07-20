@@ -209,15 +209,22 @@ class HomeScreen extends GetView<HomeController> {
                           child: Column(
                             mainAxisAlignment: mainAxisCenter,
                             children: [
-                              Image.asset(
-                                cardDetails.cardIcon,
-                                width: 50,
-                                height: 50,
+                              CircleAvatar(
+                                radius: 30,
+                                backgroundColor: Colors.white.withAlpha(
+                                  ((0.3) * 255).toInt(),
+                                ),
+                                child: Image.asset(
+                                  cardDetails.cardIcon,
+                                  width: 30,
+                                  height: 30,
+                                  color: cardDetails.textColor,
+                                ),
                               ),
                               SizedBox(height: 10),
                               Text(
                                 cardDetails.cardName,
-                                style: context.bodySmallStyle!.copyWith(
+                                style: context.displayLargeStyle!.copyWith(
                                   color: cardDetails.textColor,
                                   fontWeight: FontWeight.bold,
                                 ),

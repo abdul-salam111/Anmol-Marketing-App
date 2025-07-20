@@ -11,3 +11,4 @@ export './confirm_order_screen.dart';
 export './view_products_screen.dart';
 export './orders_history_screen.dart';
 export './profile_screen.dart';
+export './expairy_claim_screen.dart';
