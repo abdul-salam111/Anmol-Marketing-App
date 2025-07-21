@@ -199,15 +199,7 @@ class SelectProductScreen extends GetView<SelectProductController> {
             InkWell(
               onTap: () {
                 // Get.toNamed(AppRoutes.confirmOrder);
-                controller.createOrder(
-                  OrdersModel(
-                    products: [],
-                    company: controller.company,
-                    companyTotal: controller.companyTotal.toString(),
-                    totalProducts: controller.productQuantities.length
-                        .toString(),
-                  ),
-                );
+              
               },
               child: Container(
                 height: 50,

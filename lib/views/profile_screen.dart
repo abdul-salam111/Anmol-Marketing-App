@@ -3,10 +3,13 @@
 import 'package:anmol_marketing/controllers/controllers.dart';
 import 'package:anmol_marketing/core/core.dart';
 import 'package:anmol_marketing/core/utils/validators.dart';
+import 'package:anmol_marketing/services/session_manager.dart';
 import 'package:anmol_marketing/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 import 'package:iconsax/iconsax.dart';
+
+import '../services/storage.dart';
 
 class ProfileScreen extends GetView<ProfileController> {
   const ProfileScreen({super.key});
@@ -44,7 +47,7 @@ class ProfileScreen extends GetView<ProfileController> {
                       children: [
                         CircleAvatar(
                           radius: 40,
-
+                        
                           child: Image.asset(
                             AppIcons.profileicon,
                             width: 50,
@@ -54,17 +57,17 @@ class ProfileScreen extends GetView<ProfileController> {
                         ),
                         SizedBox(height: 20),
                         Text(
-                          "Softronix",
+                          "${ SessionController().getUserDetails.customer?.customerName}",
                           style: context.bodyMediumStyle!.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text(
-                          "03115308116",
-                          style: context.bodySmallStyle!.copyWith(
-                            color: AppColors.greyColor,
-                          ),
-                        ),
+                        // Text(
+                        //   "${ SessionController().getUserDetails.customer?.}",
+                        //   style: context.bodySmallStyle!.copyWith(
+                        //     color: AppColors.greyColor,
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -177,7 +180,9 @@ class ProfileScreen extends GetView<ProfileController> {
                     child: CustomButton(
                       radius: 10,
                       text: "Log Out",
-                      onPressed: () {},
+                      onPressed: () async {
+                        await controller.logoutUser();
+                      },
                       backgroundColor: Colors.red,
                     ),
                   ),

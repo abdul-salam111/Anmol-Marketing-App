@@ -1,7 +1,9 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:anmol_marketing/core/utils/validators.dart';
+import 'package:anmol_marketing/data/models/get_models/get_location_model.dart';
 import 'package:anmol_marketing/routes/app_routes.dart';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -92,12 +94,6 @@ class SignupScreen extends GetView<SignupController> {
                           ),
                           hintText: "Pharmacy Legal Name",
                           prefixIcon: Iconsax.card_edit,
-                          validator: (pharname) {
-                            return Validator.validateRequired(
-                              pharname,
-                              fieldName: "Pharmacy name",
-                            );
-                          },
                         ),
                         context.heightBox((context.screenHeight * 0.005)),
 
@@ -135,32 +131,120 @@ class SignupScreen extends GetView<SignupController> {
                           prefixIcon: Iconsax.call,
                           validator: Validator.validatePhone,
                         ),
-                        context.heightBox((context.screenHeight * 0.005)),
-                        CustomTextFormField(
-                          controller: controller.sectorController,
-                          keyboardType: TextInputType.text,
-                          borderColor: AppColors.lightGreyColor.withOpacity(
-                            0.5,
-                          ),
-                          fillColor: AppColors.mostLightGreyColor.withOpacity(
-                            0.5,
-                          ),
-                          hintText: "Sector",
-                          prefixIcon: Iconsax.location,
-                        ),
-                        context.heightBox((context.screenHeight * 0.005)),
-                        CustomTextFormField(
-                          controller: controller.townController,
-                          keyboardType: TextInputType.text,
-                          borderColor: AppColors.lightGreyColor.withOpacity(
-                            0.5,
-                          ),
-                          fillColor: AppColors.mostLightGreyColor.withOpacity(
-                            0.5,
-                          ),
-                          hintText: "Town",
-                          prefixIcon: Iconsax.map,
-                        ),
+                        context.heightBox((context.screenHeight * 0.01)),
+                        Obx(() {
+                          return DropdownButtonFormField<Sector>(
+                            style: context.bodySmallStyle!.copyWith(
+                              color: AppColors.greyTextColor,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: "Sector",
+                              hintStyle: context.bodySmallStyle!.copyWith(
+                                color: AppColors.greyTextColor,
+                              ),
+
+                              prefixIcon: Icon(
+                                Iconsax.map,
+                                color: AppColors.greyColor,
+                                size: 20,
+                              ),
+
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: AppColors.lightGreyColor.withOpacity(
+                                    0.5,
+                                  ),
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              fillColor: AppColors.mostLightGreyColor
+                                  .withOpacity(0.5),
+                              filled: true,
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                  color: AppColors.greyColor,
+                                  width: 2,
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.only(left: 10),
+                            ),
+                            value: controller.selectedSector.value,
+                            onChanged: (sector) {
+                              if (sector != null) {
+                                controller.onSectorSelected(sector);
+                                controller.sectorController.text = sector.name;
+                              }
+                            },
+                            items: controller.sectors.map((sector) {
+                              return DropdownMenuItem(
+                                value: sector,
+                                child: Text(sector.name),
+                              );
+                            }).toList(),
+                          );
+                        }),
+                        context.heightBox((context.screenHeight * 0.01)),
+                        Obx(() {
+                          return DropdownButtonFormField<Town>(
+                            dropdownColor: Colors.white,
+                            isDense: true,
+                            style: context.bodySmallStyle!.copyWith(
+                              color: AppColors.greyTextColor,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: "Town",
+                              hintStyle: context.bodySmallStyle!.copyWith(
+                                color: AppColors.greyTextColor,
+                              ),
+
+                              prefixIcon: Icon(
+                                Iconsax.location,
+                                color: AppColors.greyColor,
+                                size: 20,
+                              ),
+
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: AppColors.lightGreyColor.withOpacity(
+                                    0.5,
+                                  ),
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              fillColor: AppColors.mostLightGreyColor
+                                  .withOpacity(0.5),
+                              filled: true,
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                  color: AppColors.greyColor,
+                                  width: 2,
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.only(left: 10),
+                            ),
+                            value: controller.selectedTown.value,
+                            onChanged: (town) {
+                              if (town != null) {
+                                controller.onTownSelected(town);
+                              }
+                            },
+                            items: controller.towns.map((town) {
+                              return DropdownMenuItem(
+                                value: town,
+                                child: Text(town.name),
+                              );
+                            }).toList(),
+                          );
+                        }),
+
                         context.heightBox((context.screenHeight * 0.005)),
                         CustomTextFormField(
                           controller: controller.postalAddressController,
@@ -195,6 +279,45 @@ class SignupScreen extends GetView<SignupController> {
                         ),
                         context.heightBox((context.screenHeight * 0.005)),
                         CustomTextFormField(
+                          readonly: true,
+                          controller: controller.licenseExpiryDateController,
+                          keyboardType: TextInputType.text,
+                          borderColor: AppColors.lightGreyColor.withOpacity(
+                            0.5,
+                          ),
+                          fillColor: AppColors.mostLightGreyColor.withOpacity(
+                            0.5,
+                          ),
+                          onTap: () async {
+                            final pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
+                            );
+
+                            if (pickedDate != null) {
+                              // Format the date (optional)
+                              final formatted = "${pickedDate.year}-" "${pickedDate.month.toString().padLeft(2, '0')}-"
+                                  "${pickedDate.day.toString().padLeft(2, '0')}"
+                                 
+                                 ;
+                              controller.licenseExpiryDateController.text =
+                                  formatted;
+                            }
+                          },
+                          hintText: "License Expiry",
+                          prefixIcon: Iconsax.calendar,
+                          validator: (lice) {
+                            return Validator.validateRequired(
+                              lice,
+                              fieldName: "License Expiry",
+                            );
+                          },
+                        ),
+
+                        context.heightBox((context.screenHeight * 0.005)),
+                        CustomTextFormField(
                           controller: controller.licenseOwnerNameController,
                           keyboardType: TextInputType.text,
                           borderColor: AppColors.lightGreyColor.withOpacity(
@@ -217,14 +340,19 @@ class SignupScreen extends GetView<SignupController> {
                         SizedBox(
                           width: double.infinity,
                           height: 50,
-                          child: CustomButton(
-                            radius: 20,
-                            text: "Create an account",
-                            onPressed: () {
-                              if (controller.signupFormKey.currentState!
-                                  .validate()) {}
-                            },
-                            backgroundColor: AppColors.appPrimaryColor,
+                          child: Obx(()=>
+                             CustomButton(
+                              isLoading: controller.isLoading.value,
+                              radius: 20,
+                              text: "Create an account",
+                              onPressed: () async {
+                                if (controller.signupFormKey.currentState!
+                                    .validate()) {
+                                  await controller.createUser();
+                                }
+                              },
+                              backgroundColor: AppColors.appPrimaryColor,
+                            ),
                           ),
                         ),
                         context.heightBox((context.screenHeight * 0.02)),

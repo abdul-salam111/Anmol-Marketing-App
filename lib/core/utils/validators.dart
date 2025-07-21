@@ -59,9 +59,7 @@ class Validator {
     if (value == null || value.trim().isEmpty) {
       return 'Phone number is required';
     }
-    if (!value.isValidPhone) {
-      return 'Invalid phone number';
-    }
+   
     return null;
   }
 

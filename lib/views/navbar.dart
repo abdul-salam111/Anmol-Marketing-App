@@ -11,6 +11,7 @@ class NavBarScreen extends GetView<NavbarController> {
 
   @override
   Widget build(BuildContext context) {
+  
     return PopScope(
       onPopInvoked: (didPop) {},
       canPop: false,

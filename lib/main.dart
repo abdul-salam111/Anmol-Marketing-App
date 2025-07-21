@@ -5,6 +5,7 @@ import 'package:anmol_marketing/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+
 AnmolMarketingDatabase? anmolMarketingDatabase;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

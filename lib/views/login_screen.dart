@@ -2,6 +2,7 @@
 
 import 'package:anmol_marketing/core/utils/validators.dart';
 import 'package:anmol_marketing/routes/app_routes.dart';
+import 'package:anmol_marketing/views/signup_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,7 +16,6 @@ class LoginScreen extends GetView<LoginController> {
 
   @override
   Widget build(BuildContext context) {
-
     return UnfocusWrapper(
       child: Scaffold(
         body: SafeArea(
@@ -90,15 +90,19 @@ class LoginScreen extends GetView<LoginController> {
                         SizedBox(
                           width: double.infinity,
                           height: 50,
-                          child: CustomButton(
-                            radius: 20,
-                            text: "Sign In",
-                            onPressed: () {
-                              // if (controller.loginFormKey.currentState!
-                              //     .validate()) {}
-                              Get.offAllNamed(AppRoutes.navbar);
-                            },
-                            backgroundColor: AppColors.appPrimaryColor,
+                          child: Obx(
+                            () => CustomButton(
+                              isLoading: controller.isLoading.value,
+                              radius: 20,
+                              text: "Sign In",
+                              onPressed: () async {
+                                if (controller.loginFormKey.currentState!
+                                    .validate()) {
+                                  await controller.loginUser();
+                                }
+                              },
+                              backgroundColor: AppColors.appPrimaryColor,
+                            ),
                           ),
                         ),
                         context.heightBox((context.screenHeight * 0.02)),
@@ -117,7 +121,12 @@ class LoginScreen extends GetView<LoginController> {
                                 ),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    Get.toNamed(AppRoutes.signup);
+                                    Get.to(
+                                      () => SignupScreen(),
+                                      binding: BindingsBuilder(() {
+                                        Get.put(SignupController());
+                                      }),
+                                    );
                                   },
                               ),
                             ],

@@ -1,5 +1,6 @@
+import 'package:anmol_marketing/services/splash_services.dart';
 import 'package:get/get.dart';
-import '../routes/app_routes.dart';
+
 
 class SplashController extends GetxController {
   @override
@@ -7,20 +8,10 @@ class SplashController extends GetxController {
     super.onInit();
     _initApp();
   }
+  SplashServices splashServices=SplashServices();
 
   _initApp() async {
-    await Future.delayed(const Duration(seconds: 4));
-    Get.delete<SplashController>();
-    Get.offAllNamed(AppRoutes.login);
-
-    //
-    // // Example: check login or just navigate
-    // bool isLoggedIn = false; // replace with your logic
-
-    // if (isLoggedIn) {
-    //   Get.offAllNamed(AppRoutes.home);
-    // } else {
-    //   Get.offAllNamed(AppRoutes.login);
-    // }
+    await Future.delayed(const Duration(seconds: 3));
+   splashServices.isLoggedIn();
   }
 }

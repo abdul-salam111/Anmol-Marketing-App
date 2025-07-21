@@ -23,21 +23,21 @@ class ViewProductsScreen extends GetView<ViewProductsController> {
                 onPressed: () => Get.back(),
                 icon: const Icon(Icons.arrow_back),
               ),
-              CachedNetworkImage(
-                imageUrl: controller.company.companyLogo,
-                width: 40,
-                height: 40,
-              ),
+              // CachedNetworkImage(
+              //   imageUrl: controller.company.companyLogo,
+              //   width: 40,
+              //   height: 40,
+              // ),
             ],
           ),
           iconTheme: const IconThemeData(color: Colors.white),
-          title: Text(
-            controller.company.companyName,
-            style: context.bodyLargeStyle!.copyWith(
-              color: AppColors.whiteTextColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          // title: Text(
+          //   controller.company.companyName,
+          //   style: context.bodyLargeStyle!.copyWith(
+          //     color: AppColors.whiteTextColor,
+          //     fontWeight: FontWeight.bold,
+          //   ),
+          // ),
           centerTitle: true,
           backgroundColor: AppColors.appPrimaryColor,
         ),

@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 
 class CatalogueController extends GetxController {
   final searchQuery = "".obs;
-  RxList<Company> companies = <Company>[].obs;
-  RxList<Company> filterCompanies = <Company>[].obs;
-  DataService dataService = DataService();
+  RxList<GetCompaniesModel> companies = <GetCompaniesModel>[].obs;
+  RxList<GetCompaniesModel> filterCompanies = <GetCompaniesModel>[].obs;
+
   RxBool isLoading = false.obs;
   DatabaseHelper databaseHelper = DatabaseHelper();
   RxString errorMessage = ''.obs;
@@ -16,10 +16,10 @@ class CatalogueController extends GetxController {
   void onInit() {
     super.onInit();
     fetchCompanies();
-    
+
     // Initialize filterCompanies with empty list
     filterCompanies.value = [];
-    
+
     ever(searchQuery, (value) {
       searchCompanies(value.trim());
     });
@@ -32,18 +32,16 @@ class CatalogueController extends GetxController {
       filterCompanies.value = []; // Clear while loading
 
       final localCompanies = await databaseHelper.getCompanies();
-      
+
       if (localCompanies.isNotEmpty) {
         companies.value = localCompanies;
         filterCompanies.value = localCompanies;
         return;
       }
 
-      final apiCompanies = await dataService.getCompanies();
+      final apiCompanies = await CompaniesRepository.getCompaniesList();
       companies.value = apiCompanies;
       filterCompanies.value = apiCompanies;
-      
-    
     } catch (e) {
       errorMessage.value = 'Failed to load companies';
       print('Error: $e');
@@ -57,9 +55,9 @@ class CatalogueController extends GetxController {
       filterCompanies.value = companies.toList();
     } else {
       final queryLower = query.toLowerCase();
-      filterCompanies.value = companies.where((c) => 
-        c.companyName.toLowerCase().contains(queryLower)
-      ).toList();
+      filterCompanies.value = companies
+          .where((c) => c.companyName!.toLowerCase().contains(queryLower))
+          .toList();
     }
   }
 

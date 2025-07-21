@@ -5,25 +5,22 @@ import 'package:get/get.dart';
 
 class NavbarController extends GetxController {
   RxInt currentIndex = 0.obs;
-  DataService dataService = DataService();
-  RxList<Company> companies = <Company>[].obs;
+
+  RxList<GetCompaniesModel> companies = <GetCompaniesModel>[].obs;
   DatabaseHelper databaseHelper = DatabaseHelper();
 
   Future<void> fetchCompanies() async {
     try {
-      // First try to get companies from local database
       final localCompanies = await databaseHelper.getCompanies();
-      
       if (localCompanies.isNotEmpty) {
         // If companies exist locally, use them
         companies.value = localCompanies;
       } else {
         // If no local companies, fetch from API
-        final apiCompanies = await dataService.getCompanies();
+        final apiCompanies = await CompaniesRepository.getCompaniesList();
         companies.value = apiCompanies;
-        
         // Store the fetched companies locally
-        for (Company company in apiCompanies) {
+        for (GetCompaniesModel company in apiCompanies) {
           await databaseHelper.insertCompany(company);
         }
       }
@@ -36,6 +33,6 @@ class NavbarController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-     fetchCompanies();
+    fetchCompanies();
   }
 }

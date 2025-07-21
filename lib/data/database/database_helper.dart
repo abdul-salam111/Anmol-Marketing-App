@@ -6,15 +6,15 @@ class DatabaseHelper {
   final AnmolMarketingDatabase _database = AnmolMarketingDatabase();
 
   // Company operations
-  Future<int> insertCompany(Company company) async {
+  Future<int> insertCompany(GetCompaniesModel company) async {
     final db = await _database.database;
-    return await db!.insert('companies', company.toMap());
+    return await db!.insert('companies', company.toJson());
   }
 
-  Future<List<Company>> getCompanies() async {
+  Future<List<GetCompaniesModel>> getCompanies() async {
     final db = await _database.database;
     final List<Map<String, dynamic>> maps = await db!.query('companies');
-    return List.generate(maps.length, (i) => Company.fromJson(maps[i]));
+    return List.generate(maps.length, (i) => GetCompaniesModel.fromJson(maps[i]));
   }
   
   Future<int> deleteCompanyById(int id) async {

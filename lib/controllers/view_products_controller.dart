@@ -5,16 +5,16 @@ import 'package:get/get.dart';
 
 class ViewProductsController extends GetxController {
   // Fetch products by company id from api
-  DataService dataService = DataService();
+
   RxList<Product> products = <Product>[].obs;
   RxList<Product> filteredProducts = <Product>[].obs; // For search results
-  late Company company;
+  late GetCompaniesModel company;
   RxString searchQuery = "".obs;
 
   Future<void> fetchProducts() async {
     try {
-      products.value = await dataService.getCompanyProducts(int.parse(company.companyId));
-      filteredProducts.addAll(products);
+      // products.value = await dataService.getCompanyProducts(int.parse(company.companyId));
+      // filteredProducts.addAll(products);
     } catch (e) {
       print(e);
     }

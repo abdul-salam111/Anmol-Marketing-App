@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import '../exceptions/app_exceptions.dart';
 import 'injection_container.dart';
-
 
 class DioHelper {
   Dio dio = getDio();
@@ -14,19 +15,22 @@ class DioHelper {
     receiveTimeout: const Duration(seconds: 10),
   );
 
-  Map<String, dynamic> headers = {
-    "isAuthRequired": "Bearer tokenhere",
-    "x-api-key": "reqres-free-v1",
-  };
   Future<dynamic> getApi({
     required String url,
     bool isAuthRequired = false,
+    String? authToken,
   }) async {
-    if (isAuthRequired) {
-      options.headers = headers;
-    }
+    Options requestOptions = isAuthRequired
+        ? options.copyWith(
+            headers: {
+              ...?options.headers,
+              "Authorization": "Bearer $authToken",
+            },
+          )
+        : options;
+
     try {
-      Response response = await dio.get(url, options: options);
+      Response response = await dio.get(url, options: requestOptions);
       return response.data;
     } on DioException catch (error) {
       _handleDioError(error);
@@ -38,19 +42,24 @@ class DioHelper {
   Future<dynamic> postApi({
     required String url,
     bool isAuthRequired = false,
+    String? authToken,
     Object? requestBody,
   }) async {
-    if (isAuthRequired) {
-      options.headers = headers;
-    }
+    Options requestOptions = isAuthRequired
+        ? options.copyWith(
+            headers: {
+              ...?options.headers,
+              "Authorization": "Bearer $authToken",
+            },
+          )
+        : options;
 
     try {
-      Response response;
-      if (requestBody == null) {
-        response = await dio.post(url, options: options);
-      } else {
-        response = await dio.post(url, options: options, data: requestBody);
-      }
+      Response response = await dio.post(
+        url,
+        data: requestBody,
+        options: requestOptions,
+      );
       return response.data;
     } on DioException catch (error) {
       _handleDioError(error);
@@ -63,15 +72,20 @@ class DioHelper {
     required String url,
     bool isAuthRequired = false,
     Object? requestBody,
+    String? authToken,
   }) async {
-    if (isAuthRequired) {
-      options.headers = headers;
-    }
-
+    Options requestOptions = isAuthRequired
+        ? options.copyWith(
+            headers: {
+              ...?options.headers,
+              "Authorization": "Bearer $authToken",
+            },
+          )
+        : options;
     try {
       Response response;
       if (requestBody == null) {
-        response = await dio.put(url, options: options);
+        response = await dio.put(url, options: requestOptions);
       } else {
         response = await dio.put(url, options: options, data: requestBody);
       }
@@ -87,15 +101,21 @@ class DioHelper {
     required String url,
     bool isAuthRequired = false,
     Object? requestBody,
+    String? authToken,
   }) async {
-    if (isAuthRequired) {
-      options.headers = headers;
-    }
+    Options requestOptions = isAuthRequired
+        ? options.copyWith(
+            headers: {
+              ...?options.headers,
+              "Authorization": "Bearer $authToken",
+            },
+          )
+        : options;
 
     try {
       Response response;
       if (requestBody == null) {
-        response = await dio.patch(url, options: options);
+        response = await dio.patch(url, options: requestOptions);
       } else {
         response = await dio.patch(url, options: options, data: requestBody);
       }
@@ -111,15 +131,20 @@ class DioHelper {
     required String url,
     bool isAuthRequired = false,
     Object? requestBody,
+    String? authToken,
   }) async {
-    if (isAuthRequired) {
-      options.headers = headers;
-    }
-
+    Options requestOptions = isAuthRequired
+        ? options.copyWith(
+            headers: {
+              ...?options.headers,
+              "Authorization": "Bearer $authToken",
+            },
+          )
+        : options;
     try {
       Response response;
       if (requestBody == null) {
-        response = await dio.delete(url, options: options);
+        response = await dio.delete(url, options: requestOptions);
       } else {
         response = await dio.delete(url, options: options, data: requestBody);
       }
@@ -138,28 +163,39 @@ class DioHelper {
       case DioExceptionType.receiveTimeout:
         throw RequestTimeoutException(error.message);
       case DioExceptionType.badResponse:
-        final statusCode = error.response?.statusCode;
-        final message =
-            error.response?.data?['error']?.toString() ?? error.message;
+        final statusCode = error.response?.data['StatusCode'];
+
         switch (statusCode) {
-          case 400:
-            throw BadRequestException(message);
           case 401:
-            throw UnauthorizedException(message);
-          case 403:
-            throw ForbiddenException(message);
-          case 404:
-            throw NotFoundException(message);
-          case 405:
-            throw MethodNotAllowedException(message);
-          case 429:
-            throw TooManyRequestsException(message);
-          case 500:
-            throw InternalServerErrorException(message);
-          case 503:
-            throw ServiceUnavailableException(message);
+            throw UnauthorizedException(
+              "Session expired. Please log in again to continue.",
+            );
+          case 4002:
+            throw InvalidInputException("Invalid Input");
+          case 6001:
+            throw InvalidInputException("The user already exist!");
+          case 4003:
+            throw InvalidInputException("Invalid Mobile Number");
+          case 4004:
+            throw UnauthorizedException("Otp Not Verified");
+          case 4005:
+            throw UnauthorizedException("Customer not approved");
+          case 4006:
+            throw TimeoutException("Otp Expired!");
+          case 4007:
+            throw InvalidInputException("Invalid Otp!");
+          case 4008:
+            throw NotFoundException("Customer not found");
+          case 4009:
+            throw InvalidInputException("Password Do Not Match");
+          case 4010:
+            throw InvalidInputException("InValid Customer");
+          case 4011:
+            throw InvalidInputException("InValid Login Id");
+          case 4012:
+            throw InvalidInputException("InValid Order");
           default:
-            throw FetchDataException(message);
+            throw FetchDataException("Error occurred!");
         }
       case DioExceptionType.cancel:
         throw FetchDataException('Request cancelled');

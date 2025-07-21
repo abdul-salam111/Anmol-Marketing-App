@@ -12,18 +12,18 @@ class SelectProductController extends GetxController {
   late RxDouble totalAmount; // grand total of overall order
 
   // Fetch products by company id from api
-  DataService dataService = DataService();
+
   RxList<Product> products = <Product>[].obs;
   RxList<Product> filteredProducts = <Product>[].obs;
-  late Company company;
+  late GetCompaniesModel company;
   RxString searchQuery = "".obs;
 
   Future<void> fetchProducts() async {
     try {
-      products.value = await dataService.getCompanyProducts(
-        int.parse(company.companyId),
-      );
-      filteredProducts.value = products;
+      // products.value = await dataService.getCompanyProducts(
+      //   int.parse(company.companyId),
+      // );
+      // filteredProducts.value = products;
     } catch (e) {
       print(e);
     }
@@ -46,14 +46,7 @@ class SelectProductController extends GetxController {
   final CreateOrderController createOrderController =
       Get.find<CreateOrderController>();
   DatabaseHelper databaseHelper = DatabaseHelper();
-  void createOrder(OrdersModel orderModel) async {
-    createOrderController.cartItems.add(orderModel);
-    createOrderController.totalAmount.value += companyTotal.value;
-    createOrderController.totalProducts.value += productQuantities.length;
-    await databaseHelper.deleteCompanyById(int.parse(company.companyId));
-    createOrderController.fetchCompanies();
-    createOrderController.update();
-  }
+ 
 
   @override
   void onInit() {

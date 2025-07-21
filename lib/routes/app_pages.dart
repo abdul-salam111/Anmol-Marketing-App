@@ -22,6 +22,7 @@ class AppPages {
       name: AppRoutes.signup,
       page: () => const SignupScreen(),
       binding: SignupBinding(),
+      
     ),
     GetPage(
       name: AppRoutes.phoneVerification,

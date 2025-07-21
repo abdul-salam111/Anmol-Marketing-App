@@ -9,7 +9,7 @@ class AppToasts {
       backgroundColor: Colors.green,
       duration: const Duration(seconds: 3),
       icon: const Icon(Icons.check_circle, color: Colors.white),
-      flushbarPosition: FlushbarPosition.BOTTOM,
+      flushbarPosition: FlushbarPosition.TOP,
       margin: const EdgeInsets.all(8),
       borderRadius: BorderRadius.circular(8),
     ).show(context);
@@ -22,7 +22,7 @@ class AppToasts {
       backgroundColor: Colors.red,
       duration: const Duration(seconds: 3),
       icon: const Icon(Icons.error, color: Colors.white),
-      flushbarPosition: FlushbarPosition.BOTTOM,
+      flushbarPosition: FlushbarPosition.TOP,
       margin: const EdgeInsets.all(8),
       borderRadius: BorderRadius.circular(8),
     ).show(context);
@@ -35,7 +35,7 @@ class AppToasts {
       backgroundColor: Colors.orange,
       duration: const Duration(seconds: 3),
       icon: const Icon(Icons.warning, color: Colors.white),
-      flushbarPosition: FlushbarPosition.BOTTOM,
+      flushbarPosition: FlushbarPosition.TOP,
       margin: const EdgeInsets.all(8),
       borderRadius: BorderRadius.circular(8),
     ).show(context);
