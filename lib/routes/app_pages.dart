@@ -1,4 +1,5 @@
 import 'package:anmol_marketing/bindings/create_order_binding.dart';
+import 'package:anmol_marketing/controllers/select_Product_controller.dart';
 import 'package:anmol_marketing/views/ac_statements_screen.dart';
 
 import 'package:get/get.dart';
@@ -22,7 +23,6 @@ class AppPages {
       name: AppRoutes.signup,
       page: () => const SignupScreen(),
       binding: SignupBinding(),
-      
     ),
     GetPage(
       name: AppRoutes.phoneVerification,
@@ -52,7 +52,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.selectProduct,
       page: () => SelectProductScreen(),
-      binding: SelectProductBinding(),
+      binding: SelectProductBinding(), // Create this binding class
     ),
     GetPage(
       name: AppRoutes.confirmOrder,

@@ -5,4 +5,5 @@ class ApiKeys {
   static const getlocations="$baseUrl/Location/GetList";
   static const registerUser="$baseUrl/Auth/InsertOrUpdate";
   static const getCompaniesList="$baseUrl/Company/GetList";
+  static const getCompanyProductsList="$baseUrl/Product/GetList";
 }

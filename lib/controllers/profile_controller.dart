@@ -6,6 +6,7 @@ class ProfileController extends GetxController {
   Future<void> logoutUser() async {
     await storage.clearValues(StorageKeys.loggedIn);
     await storage.clearValues(StorageKeys.userDetails);
+    await storage.clearValues(StorageKeys.token);
     await Get.offAllNamed(AppRoutes.login);
   }
 }

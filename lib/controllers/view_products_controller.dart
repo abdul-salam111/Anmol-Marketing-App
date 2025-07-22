@@ -1,21 +1,30 @@
 import 'package:anmol_marketing/data/models/get_models/get_companies.dart';
-import 'package:anmol_marketing/data/models/get_models/get_products_model.dart';
-import 'package:anmol_marketing/data/repositories/companies_repo.dart';
+import 'package:anmol_marketing/data/models/get_models/get_products.dart';
+import 'package:anmol_marketing/data/repositories/products_repository.dart';
 import 'package:get/get.dart';
 
 class ViewProductsController extends GetxController {
   // Fetch products by company id from api
-
-  RxList<Product> products = <Product>[].obs;
-  RxList<Product> filteredProducts = <Product>[].obs; // For search results
+  RxList<GetProductsModel> products = <GetProductsModel>[].obs;
+  RxList<GetProductsModel> filteredProducts =
+      <GetProductsModel>[].obs; // For search results
   late GetCompaniesModel company;
   RxString searchQuery = "".obs;
+  RxBool isLoading = false.obs;
 
   Future<void> fetchProducts() async {
     try {
-      // products.value = await dataService.getCompanyProducts(int.parse(company.companyId));
-      // filteredProducts.addAll(products);
-    } catch (e) {
+      isLoading.value = true;
+
+      products.value = await ProductsRepository.getCompanyProducts(
+        company.companyId!.toString(),
+      );
+      filteredProducts.assignAll(products);
+   
+      isLoading.value = false;
+    }  catch (e) {
+      isLoading.value = false;
+
       print(e);
     }
   }
@@ -29,7 +38,7 @@ class ViewProductsController extends GetxController {
     } else {
       // Filter products where productName contains the query (case-insensitive)
       filteredProducts.value = products.where((product) {
-        return product.productName.toLowerCase().contains(searchQuery.value);
+        return product.productName!.toLowerCase().contains(searchQuery.value);
       }).toList();
     }
   }

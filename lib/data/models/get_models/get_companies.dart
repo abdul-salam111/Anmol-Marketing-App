@@ -31,7 +31,7 @@ class GetCompaniesModel {
         );
 
     factory GetCompaniesModel.fromJson(Map<String, dynamic> json) => GetCompaniesModel(
-        companyId: json["CompanyId"],
+        companyId: int.tryParse(json["CompanyId"].toString()),
         companyName: json["CompanyName"],
         companyLogo: json["CompanyLogo"],
     );

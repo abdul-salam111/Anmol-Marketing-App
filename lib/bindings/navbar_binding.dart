@@ -11,6 +11,5 @@ class NavbarBinding extends Bindings {
     Get.lazyPut(() => CreateOrderController());
     Get.lazyPut(() => OrderHistoryController());
     Get.lazyPut(() => ProfileController());
-
   }
 }

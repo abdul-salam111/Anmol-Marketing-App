@@ -60,6 +60,7 @@ class DioHelper {
         data: requestBody,
         options: requestOptions,
       );
+      
       return response.data;
     } on DioException catch (error) {
       _handleDioError(error);
@@ -164,7 +165,7 @@ class DioHelper {
         throw RequestTimeoutException(error.message);
       case DioExceptionType.badResponse:
         final statusCode = error.response?.data['StatusCode'];
-
+        
         switch (statusCode) {
           case 401:
             throw UnauthorizedException(

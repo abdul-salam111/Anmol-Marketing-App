@@ -6,3 +6,4 @@ export 'network_manager/prints.dart';
 export './models/get_models/get_login_response.dart';
 export './models/post_models/login_model.dart';
 export './models/get_models/get_location_model.dart';
+export './models/get_models/get_products.dart';

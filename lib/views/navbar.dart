@@ -3,7 +3,7 @@ import 'package:anmol_marketing/controllers/controllers.dart';
 import 'package:anmol_marketing/core/core.dart';
 import 'package:anmol_marketing/views/views.dart';
 import 'package:flutter/material.dart';
-import 'package:get/state_manager.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
 class NavBarScreen extends GetView<NavbarController> {
@@ -37,6 +37,13 @@ class NavBarScreen extends GetView<NavbarController> {
             currentIndex: controller.currentIndex.value,
             onTap: (index) {
               controller.currentIndex.value = index;
+              if(index==1){
+                 Get.find<CatalogueController>().fetchCompanies();
+              }
+              else if(index==2){
+                Get.find<CreateOrderController>().fetchCompanies();
+                Get.find<CreateOrderController>().fetchOrders();
+              }
             },
             selectedItemColor: AppColors.appPrimaryColor,
             type: BottomNavigationBarType.fixed,

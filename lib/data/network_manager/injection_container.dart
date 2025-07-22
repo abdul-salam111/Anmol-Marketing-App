@@ -22,6 +22,7 @@ Dio getDio() {
 
       onResponse: (Response response, ResponseInterceptorHandler handler) {
         printValue(tag: 'API RESPONSE:', response.data);
+
         return handler.next(response);
       },
 

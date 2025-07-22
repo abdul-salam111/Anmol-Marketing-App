@@ -33,19 +33,62 @@ class AnmolMarketingDatabase {
     await db.execute('''
       CREATE TABLE companies(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        companyId TEXT NOT NULL,
-        companyName TEXT NOT NULL,
-        companyLogo TEXT NOT NULL
+        CompanyId INTEGER NOT NULL,
+        CompanyName TEXT NOT NULL,
+        CompanyLogo TEXT NOT NULL
       )
     ''');
     await db.execute('''
-      CREATE TABLE catalog(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        companyId TEXT NOT NULL,
-        companyName TEXT NOT NULL,
-        companyLogo TEXT NOT NULL
-      )
+     CREATE TABLE catalog(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    CompanyId INTEGER NOT NULL,
+    CompanyName TEXT NOT NULL,
+    CompanyLogo TEXT NOT NULL
+     )
     ''');
+    // New tables for orders
+    await db.execute('''
+    CREATE TABLE orders(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      orderId TEXT NOT NULL,
+      orderDate TEXT NOT NULL,
+      grandTotal REAL NOT NULL,
+      totalProducts INTEGER NOT NULL
+   
+    )
+  ''');
+
+    await db.execute('''
+    CREATE TABLE order_companies(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      orderId TEXT NOT NULL,
+      companyId INTEGER NOT NULL,
+      companyName TEXT NOT NULL,
+      companyLogo TEXT NOT NULL,
+      companyTotal REAL NOT NULL,
+      totalProducts INTEGER NOT NULL,
+      FOREIGN KEY(orderId) REFERENCES orders(orderId)
+    )
+  ''');
+
+    await db.execute('''
+    CREATE TABLE order_products(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      orderId TEXT NOT NULL,
+      companyId INTEGER NOT NULL,
+      productId INTEGER NOT NULL,
+      productName TEXT NOT NULL,
+      productLogo TEXT NOT NULL,
+      pack TEXT NOT NULL,
+      productStock TEXT NOT NULL,
+      tradePrice REAL NOT NULL,
+      salePrice REAL NOT NULL,
+      quantity INTEGER NOT NULL,
+      totalPrice REAL NOT NULL,
+      FOREIGN KEY(orderId) REFERENCES orders(orderId),
+      FOREIGN KEY(companyId) REFERENCES order_companies(companyId)
+    )
+  ''');
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {

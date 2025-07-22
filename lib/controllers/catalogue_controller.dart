@@ -1,6 +1,6 @@
 import 'package:anmol_marketing/data/database/database_helper.dart';
 import 'package:anmol_marketing/data/models/get_models/get_companies.dart';
-import 'package:anmol_marketing/data/repositories/companies_repo.dart';
+
 import 'package:get/get.dart';
 
 class CatalogueController extends GetxController {
@@ -13,8 +13,8 @@ class CatalogueController extends GetxController {
   RxString errorMessage = ''.obs;
 
   @override
-  void onInit() {
-    super.onInit();
+  void onReady() {
+    super.onReady();
     fetchCompanies();
 
     // Initialize filterCompanies with empty list
@@ -31,17 +31,14 @@ class CatalogueController extends GetxController {
       errorMessage('');
       filterCompanies.value = []; // Clear while loading
 
-      final localCompanies = await databaseHelper.getCompanies();
+      final localCompanies = await databaseHelper.getCatalogCompanies();
 
       if (localCompanies.isNotEmpty) {
         companies.value = localCompanies;
         filterCompanies.value = localCompanies;
+
         return;
       }
-
-      final apiCompanies = await CompaniesRepository.getCompaniesList();
-      companies.value = apiCompanies;
-      filterCompanies.value = apiCompanies;
     } catch (e) {
       errorMessage.value = 'Failed to load companies';
       print('Error: $e');

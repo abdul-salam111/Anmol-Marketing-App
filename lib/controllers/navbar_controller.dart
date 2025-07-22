@@ -12,6 +12,7 @@ class NavbarController extends GetxController {
   Future<void> fetchCompanies() async {
     try {
       final localCompanies = await databaseHelper.getCompanies();
+
       if (localCompanies.isNotEmpty) {
         // If companies exist locally, use them
         companies.value = localCompanies;
@@ -21,7 +22,12 @@ class NavbarController extends GetxController {
         companies.value = apiCompanies;
         // Store the fetched companies locally
         for (GetCompaniesModel company in apiCompanies) {
+          if (company.companyId == null) {
+            continue;
+          }
+
           await databaseHelper.insertCompany(company);
+          await databaseHelper.insertCompaniesToCatalog(company);
         }
       }
     } catch (e) {
@@ -31,8 +37,8 @@ class NavbarController extends GetxController {
   }
 
   @override
-  void onInit() {
-    super.onInit();
-    fetchCompanies();
+  void onReady() async {
+    super.onReady();
+    await fetchCompanies();
   }
 }

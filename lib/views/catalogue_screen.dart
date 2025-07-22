@@ -66,12 +66,12 @@ class CatalogueScreen extends GetView<CatalogueController> {
                           },
                           contentPadding: EdgeInsets.zero,
                           leading: ProductImage(
-                            imageUrl: company.companyLogo??"",
+                            imageUrl: company.companyLogo ?? "",
                             width: 50,
                             height: 50,
                           ),
                           title: Text(
-                            company.companyName??"",
+                            company.companyName ?? "",
                             style: context.bodySmallStyle!.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
