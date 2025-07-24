@@ -1,4 +1,4 @@
-package com.anmol.app.anmol_marketing
+package anmol.marketing.app
 
 import io.flutter.embedding.android.FlutterActivity
 

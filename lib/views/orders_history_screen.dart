@@ -1,9 +1,11 @@
 import 'package:anmol_marketing/core/core.dart';
 
 import 'package:anmol_marketing/views/widgets/custom_appbar.dart';
+import 'package:anmol_marketing/views/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 
 import '../controllers/controllers.dart';
 
@@ -37,8 +39,8 @@ class OrdersHistoryScreen extends GetView<OrderHistoryController> {
 
                     return Text(
                       "Showing orders from $from to $to",
-                      style: context.bodySmallStyle!.copyWith(
-                        color: AppColors.darkGreyColor,
+                      style: context.displayLargeStyle!.copyWith(
+                        color: AppColors.blackTextColor,
                       ),
                     );
                   }),
@@ -48,14 +50,14 @@ class OrdersHistoryScreen extends GetView<OrderHistoryController> {
           ),
           const SizedBox(height: 20),
           Padding(
-            padding: screenPadding,
+            padding: EdgeInsets.only(left: 20, right: 20),
             child: Row(
               children: [
                 Expanded(
                   flex: 1,
                   child: Text(
                     "No",
-                    style: context.bodyMediumStyle!.copyWith(
+                    style: context.bodySmallStyle!.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -63,10 +65,10 @@ class OrdersHistoryScreen extends GetView<OrderHistoryController> {
                 Expanded(
                   flex: 3,
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 25),
+                    padding: const EdgeInsets.only(left: 15),
                     child: Text(
                       "Date",
-                      style: context.bodyMediumStyle!.copyWith(
+                      style: context.bodySmallStyle!.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -76,18 +78,18 @@ class OrdersHistoryScreen extends GetView<OrderHistoryController> {
                   flex: 2,
                   child: Text(
                     "Amount",
-                    style: context.bodyMediumStyle!.copyWith(
+                    style: context.bodySmallStyle!.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 20),
+                    padding: EdgeInsets.only(left: context.screenWidth * 0.1),
                     child: Text(
                       "Status",
-                      style: context.bodyMediumStyle!.copyWith(
+                      style: context.bodySmallStyle!.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -97,50 +99,92 @@ class OrdersHistoryScreen extends GetView<OrderHistoryController> {
             ),
           ),
 
-          Divider(height: 0),
+          Padding(
+            padding: EdgeInsets.only(left: 10, right: 20),
+            child: Divider(height: 0, thickness: 2, color: Colors.black),
+          ),
 
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.zero,
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.only(top: 20, left: 14, right: 14),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          "${index + 1}",
-                          style: context.bodySmallStyle!,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: Text(
-                            "21-Oct-2025",
-                            style: context.bodySmallStyle!,
+          Obx(
+            () => controller.isLoading.value
+                ? Expanded(child: Center(child: LoadingIndicator()))
+                : controller.getAllOrdersList.isNotEmpty
+                ? Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      itemCount: controller.getAllOrdersList.length,
+                      itemBuilder: (context, index) {
+                        final order = controller.getAllOrdersList[index];
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            top: 10,
+                            left: 20,
+                            right: 20,
                           ),
-                        ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: Text(
+                                  "${order.orderId}",
+                                  style: context.displayLargeStyle!,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: Text(
+                                    DateFormat(
+                                      "dd-MMM-yyyy",
+                                    ).format(order.docDate!).toString(),
+                                    style: context.displayLargeStyle!,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 3.0),
+                                  child: Text(
+                                    "${order.amount}",
+                                    style: context.displayLargeStyle!,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 12),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                      color: Colors.amber,
+
+                                      padding: EdgeInsets.all(5),
+                                      child: Center(
+                                        child: Text(
+                                          order.status.toString(),
+                                          style: context.displayMediumStyle!,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                : Expanded(
+                    child: Center(
+                      child: Text(
+                        "No orders history exist!",
+                        style: context.bodySmallStyle,
                       ),
-                      Expanded(
-                        flex: 2,
-                        child: Text("1255000", style: context.bodySmallStyle!),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          "In-Progress",
-                          style: context.bodySmallStyle!,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                );
-              },
-            ),
           ),
         ],
       ),
@@ -220,6 +264,7 @@ class OrdersHistoryScreen extends GetView<OrderHistoryController> {
               child: ElevatedButton(
                 onPressed: () {
                   Get.back();
+                  controller.getAllOrders();
                 },
                 child: const Text("Apply"),
               ),

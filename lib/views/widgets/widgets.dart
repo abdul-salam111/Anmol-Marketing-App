@@ -6,3 +6,4 @@ export './custom_appbar.dart';
 export './custom_searchfield.dart';
 export './product_image.dart';
 export './custom_dropdown_textfield.dart';
+export './loading_popup.dart';

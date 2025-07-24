@@ -5,11 +5,10 @@ import 'package:anmol_marketing/core/core.dart';
 import 'package:anmol_marketing/core/utils/validators.dart';
 import 'package:anmol_marketing/services/session_manager.dart';
 import 'package:anmol_marketing/views/widgets/widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 import 'package:iconsax/iconsax.dart';
-
-import '../services/storage.dart';
 
 class ProfileScreen extends GetView<ProfileController> {
   const ProfileScreen({super.key});
@@ -47,17 +46,29 @@ class ProfileScreen extends GetView<ProfileController> {
                       children: [
                         CircleAvatar(
                           radius: 40,
-                        
-                          child: Image.asset(
-                            AppIcons.profileicon,
-                            width: 50,
-                            height: 50,
-                            color: AppColors.appPrimaryColor,
-                          ),
+                          backgroundImage:
+                              (SessionController()
+                                          .getUserDetails
+                                          .customer
+                                          ?.logo !=
+                                      null &&
+                                  SessionController()
+                                      .getUserDetails
+                                      .customer!
+                                      .logo!
+                                      .isNotEmpty)
+                              ? CachedNetworkImageProvider(
+                                  SessionController()
+                                      .getUserDetails
+                                      .customer!
+                                      .logo!,
+                                )
+                              : NetworkImage(AppIcons.profiledefault)
+                                    as ImageProvider,
                         ),
                         SizedBox(height: 20),
                         Text(
-                          "${ SessionController().getUserDetails.customer?.customerName}",
+                          "${SessionController().getUserDetails.customer?.customerName}",
                           style: context.bodyMediumStyle!.copyWith(
                             fontWeight: FontWeight.bold,
                           ),

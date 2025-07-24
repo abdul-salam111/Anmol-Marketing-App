@@ -15,7 +15,34 @@ class SelectProductScreen extends GetView<SelectProductController> {
   Widget build(BuildContext context) {
     return UnfocusWrapper(
       child: Scaffold(
-        appBar: CustomAppBar(title: "Select Products"),
+        appBar: AppBar(
+          leadingWidth: 100,
+          leading: Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  Get.back();
+                },
+                icon: const Icon(Icons.arrow_back),
+              ),
+              CachedNetworkImage(
+                imageUrl: controller.company.companyLogo ?? "",
+                width: 40,
+                height: 40,
+              ),
+            ],
+          ),
+          iconTheme: const IconThemeData(color: Colors.white),
+          title: Text(
+            controller.company.companyName!,
+            style: context.bodyLargeStyle!.copyWith(
+              color: AppColors.whiteTextColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          centerTitle: true,
+          backgroundColor: AppColors.appPrimaryColor,
+        ),
         body: Obx(
           () => controller.isLoading.value
               ? LoadingIndicator()
@@ -44,7 +71,8 @@ class SelectProductScreen extends GetView<SelectProductController> {
                           padding: screenPadding,
                           itemCount: controller.filteredProducts.length,
                           itemBuilder: (context, index) {
-                            final product = controller.filteredProducts[index];
+                            final product =
+                                controller.filteredProducts[index];
                             return InkWell(
                               onTap: () {
                                 showProductDetails(context, product);
@@ -57,18 +85,18 @@ class SelectProductScreen extends GetView<SelectProductController> {
                                       imageUrl: product.productLogo!,
                                     ),
                                     SizedBox(width: 10),
-
+    
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment: crossAxisStart,
-
+    
                                         children: [
                                           Text(
                                             product.productName!,
                                             style: context.bodySmallStyle!
                                                 .copyWith(
-                                                  color:
-                                                      AppColors.blackTextColor,
+                                                  color: AppColors
+                                                      .blackTextColor,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                             maxLines: 1,
@@ -100,7 +128,7 @@ class SelectProductScreen extends GetView<SelectProductController> {
                                             ],
                                           ),
                                           SizedBox(height: 3),
-
+    
                                           Row(
                                             children: [
                                               Text(
@@ -127,7 +155,7 @@ class SelectProductScreen extends GetView<SelectProductController> {
                                             ],
                                           ),
                                           SizedBox(height: 3),
-
+    
                                           Row(
                                             children: [
                                               Text(
@@ -141,7 +169,8 @@ class SelectProductScreen extends GetView<SelectProductController> {
                                               ),
                                               SizedBox(width: 5),
                                               Text(
-                                                product.productStock.toString(),
+                                                product.productStock
+                                                    .toString(),
                                                 style: context
                                                     .displayLargeStyle!
                                                     .copyWith(
@@ -156,14 +185,31 @@ class SelectProductScreen extends GetView<SelectProductController> {
                                         ],
                                       ),
                                     ),
-
+    
                                     Container(
                                       padding: defaultPadding,
                                       decoration: BoxDecoration(
                                         border: Border.all(
-                                          color: AppColors.darkGreyColor,
+                                          color:
+                                              (controller.productQuantities[product] !=
+                                                      null &&
+                                                  controller
+                                                          .productQuantities[product]! >
+                                                      0)
+                                              ? Colors.black
+                                              : AppColors.darkGreyColor,
+                                          width:
+                                              (controller.productQuantities[product] !=
+                                                      null &&
+                                                  controller
+                                                          .productQuantities[product]! >
+                                                      0)
+                                              ? 2
+                                              : 1,
                                         ),
-                                        borderRadius: BorderRadius.circular(5),
+                                        borderRadius: BorderRadius.circular(
+                                          5,
+                                        ),
                                       ),
                                       child: Obx(
                                         () => Text(
@@ -173,10 +219,24 @@ class SelectProductScreen extends GetView<SelectProductController> {
                                               : controller
                                                     .productQuantities[product]
                                                     .toString(),
-                                          style: context.bodySmallStyle!
-                                              .copyWith(
-                                                color: AppColors.darkGreyColor,
-                                              ),
+                                          style: context.bodySmallStyle!.copyWith(
+                                            color:
+                                                (controller.productQuantities[product] !=
+                                                        null &&
+                                                    controller
+                                                            .productQuantities[product]! >
+                                                        0)
+                                                ? Colors.black
+                                                : AppColors.darkGreyColor,
+                                            fontWeight:
+                                                (controller.productQuantities[product] !=
+                                                        null &&
+                                                    controller
+                                                            .productQuantities[product]! >
+                                                        0)
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -191,7 +251,7 @@ class SelectProductScreen extends GetView<SelectProductController> {
                         ),
                       ),
                     ),
-
+    
                     Container(
                       padding: padding14,
                       height: 90,
@@ -244,7 +304,6 @@ class SelectProductScreen extends GetView<SelectProductController> {
                     ),
                     InkWell(
                       onTap: () async {
-                        
                         await controller.saveOrder();
                       },
                       child: Container(
@@ -384,6 +443,7 @@ class SelectProductScreen extends GetView<SelectProductController> {
                                       product,
                                       quantity,
                                     );
+
                                     Get.back();
                                   },
                                   child: const Text("Update"),
@@ -399,7 +459,10 @@ class SelectProductScreen extends GetView<SelectProductController> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
                                   ),
-                                  child: const Text("Cancel"),
+                                  child: const Text(
+                                    "Cancel",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 ),
                               ],
                             )

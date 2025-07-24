@@ -1,9 +1,11 @@
+import 'package:anmol_marketing/core/core.dart';
 import 'package:anmol_marketing/core/utils/apptoast.dart';
 import 'package:anmol_marketing/data/data.dart';
 import 'package:anmol_marketing/data/models/post_models/register_user_model.dart';
 import 'package:anmol_marketing/data/repositories/auth_repository.dart';
 import 'package:anmol_marketing/data/repositories/location_repository.dart';
 import 'package:anmol_marketing/routes/app_routes.dart';
+import 'package:anmol_marketing/views/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -66,30 +68,98 @@ class SignupController extends GetxController {
   Future createUser() async {
     try {
       isLoading.value = true;
-      final isSuccess = await AuthRepository.signupUser(
+
+      final getRegistrationResponse = await AuthRepository.signupUser(
         RegisterUserModel(
           customerName: pharmacyNameController.text,
           mobileNbr: whatsAppNumberController.text,
           password: passwordController.text,
           locationId: selectedLocationId.value,
           licenseNbr: licenseNumberController.text,
-
           owerName: licenseOwnerNameController.text,
           address: postalAddressController.text,
-          phoneWork: workPhoneController.text,
           licenseExpiryDate: licenseExpiryDateController.text,
         ),
       );
+
       isLoading.value = false;
 
-      if (isSuccess) {
-        Get.toNamed(AppRoutes.phoneVerification);
-      }
+      // Show dialog
+      Get.defaultDialog(
+        title: "",
+        content: Padding(
+          padding: padding14,
+          child: Column(
+            children: [
+              CircleAvatar(
+                backgroundColor: Colors.green,
+                radius: 40,
+                child: Icon(Icons.check, size: 40, color: Colors.white),
+              ),
+
+              SizedBox(height: 20),
+              Text("Verify Account!", style: Get.context!.headlineSmallStyle),
+              SizedBox(height: 10),
+              Text(
+                "Please, check your whatapp for code and verify your account.",
+                textAlign: textAlignCenter,
+                style: Get.context!.bodySmallStyle!.copyWith(
+                  color: AppColors.greyColor,
+                ),
+              ),
+              SizedBox(height: 20),
+
+              SizedBox(
+                width: 100,
+                child: CustomButton(
+                  backgroundColor: AppColors.appPrimaryColor,
+                  radius: 10,
+                  text: "Verify",
+                  onPressed: () {
+                    Get.back();
+                    navigateToVerification(getRegistrationResponse);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        barrierDismissible: false,
+      );
+
+      // Automatically navigate after 7 seconds
+      Future.delayed(const Duration(seconds: 7), () {
+        if (Get.isDialogOpen ?? false) {
+          Get.back(); // Close dialog
+          navigateToVerification(getRegistrationResponse);
+        }
+      });
+
+      // Clear form fields
+      whatsAppNumberController.clear();
+      passwordController.clear();
+      pharmacyNameController.clear();
+      pharmacyOwnerNameController.clear();
+      workPhoneController.clear();
+      selectedTown.value = null;
+      selectedSector.value = null;
+      licenseExpiryDateController.clear();
+      licenseNumberController.clear();
+      licenseOwnerNameController.clear();
     } catch (error) {
       isLoading.value = false;
-
       AppToasts.showErrorToast(Get.context!, error.toString());
     }
+  }
+
+  void navigateToVerification(getRegistrationResponse) {
+    Get.toNamed(
+      AppRoutes.phoneVerification,
+      arguments: [
+        getRegistrationResponse.customerId,
+        getRegistrationResponse.otp,
+      ],
+    );
   }
 
   @override

@@ -1,7 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:anmol_marketing/core/utils/validators.dart';
-import 'package:anmol_marketing/routes/app_routes.dart';
 import 'package:anmol_marketing/views/signup_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -73,6 +72,7 @@ class LoginScreen extends GetView<LoginController> {
                           hintText: "Password",
                           prefixIcon: Iconsax.lock,
                           validator: Validator.validatePassword,
+                         
                         ),
                         Align(
                           alignment: centerRight,

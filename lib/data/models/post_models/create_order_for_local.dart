@@ -61,6 +61,7 @@ class OrderProduct {
   final String productLogo;
   final String pack;
   final double tradePrice;
+  final double salePrice;
   final int quantity;
   final double totalPrice;
 
@@ -72,6 +73,7 @@ class OrderProduct {
     required this.tradePrice,
     required this.quantity,
     required this.totalPrice,
+    required this.salePrice,
   });
 
   factory OrderProduct.fromJson(Map<String, dynamic> json) {
@@ -83,6 +85,7 @@ class OrderProduct {
       tradePrice: json['tradePrice'],
       quantity: json['quantity'],
       totalPrice: json['totalPrice'],
+      salePrice:json['salePrice']
     );
   }
 }

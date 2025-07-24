@@ -1,7 +1,7 @@
 import 'package:anmol_marketing/data/database/database.dart';
 import 'package:anmol_marketing/data/models/get_models/get_companies.dart';
 import 'package:anmol_marketing/data/models/get_models/get_products.dart';
-import 'package:anmol_marketing/data/models/post_models/create_order.dart';
+import 'package:anmol_marketing/data/models/post_models/create_order_for_local.dart';
 
 class DatabaseHelper {
   final AnmolMarketingDatabase _database = AnmolMarketingDatabase();
@@ -304,52 +304,6 @@ class DatabaseHelper {
     } catch (e) {
       print('Error fetching all orders: $e');
       return [];
-    }
-  }
-
-  /// Retrieves a simplified list of orders (without nested data)
-  /// @return: List of order records with basic info, or empty list if failed
-  Future<List<Map<String, dynamic>>> getOrderList() async {
-    try {
-      final db = await _database.database;
-      return await db!.query(
-        'orders',
-        columns: ['orderId', 'orderDate', 'grandTotal', 'totalProducts'],
-        orderBy: 'orderDate DESC',
-      );
-    } catch (e) {
-      print('Error fetching order list: $e');
-      return [];
-    }
-  }
-
-  /// Calculates the sum of all order grand totals
-  /// @return: The total amount across all orders, or 0 if failed
-  Future<double> getTotalAmount() async {
-    try {
-      final db = await _database.database;
-      final result = await db!.rawQuery(
-        'SELECT SUM(grandTotal) as total FROM orders',
-      );
-      return result.first['total'] as double? ?? 0.0;
-    } catch (e) {
-      print('Error getting total amount: $e');
-      return 0.0;
-    }
-  }
-
-  /// Calculates the sum of all products across all orders
-  /// @return: The total product count across all orders, or 0 if failed
-  Future<int> getTotalProducts() async {
-    try {
-      final db = await _database.database;
-      final result = await db!.rawQuery(
-        'SELECT SUM(totalProducts) as total FROM orders',
-      );
-      return result.first['total'] as int? ?? 0;
-    } catch (e) {
-      print('Error getting total products: $e');
-      return 0;
     }
   }
 

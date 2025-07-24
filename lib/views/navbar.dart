@@ -11,38 +11,24 @@ class NavBarScreen extends GetView<NavbarController> {
 
   @override
   Widget build(BuildContext context) {
-  
     return PopScope(
-      onPopInvoked: (didPop) {},
+      onPopInvoked: (didPop) {
+        Get.find<NavbarController>().currentIndex.value=0;
+      },
       canPop: false,
       child: Scaffold(
-        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        // floatingActionButton: FloatingActionButton(
-        //   backgroundColor: AppColors.appLightThemeBackground,
-        //   elevation:0 ,
-        //   onPressed: () {},
-        //   child: Container(
-        //     width: 50,
-        //     height: 50,
-        //     decoration: BoxDecoration(
-        //       color: AppColors.appLightThemeBackground,
-        //       border: Border.all(color: AppColors.appPrimaryColor),
-        //       borderRadius: BorderRadius.circular(50),
-        //     ),
-        //     child: Icon(Iconsax.add, size: 30, color: AppColors.appPrimaryColor),
-        //   ),
-        // ),
         bottomNavigationBar: Obx(
           () => BottomNavigationBar(
             currentIndex: controller.currentIndex.value,
             onTap: (index) {
               controller.currentIndex.value = index;
-              if(index==1){
-                 Get.find<CatalogueController>().fetchCompanies();
-              }
-              else if(index==2){
+              if (index == 1) {
+                Get.find<CatalogueController>().fetchCompanies();
+              } else if (index == 2) {
                 Get.find<CreateOrderController>().fetchCompanies();
-                Get.find<CreateOrderController>().fetchOrders();
+              }
+              else if(index==3){
+                Get.find<OrderHistoryController>().getAllOrders();
               }
             },
             selectedItemColor: AppColors.appPrimaryColor,

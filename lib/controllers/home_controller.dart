@@ -1,10 +1,33 @@
 import 'package:anmol_marketing/controllers/navbar_controller.dart';
 import 'package:anmol_marketing/core/core.dart';
+import 'package:anmol_marketing/core/utils/apptoast.dart';
+import 'package:anmol_marketing/data/models/get_models/get_last_order.dart';
+import 'package:anmol_marketing/data/repositories/orders_repository.dart';
 import 'package:anmol_marketing/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/exceptions/exceptions.dart';
 
 class HomeController extends GetxController {
+  final getLastOrderModel = GetLastOrderModel().obs;
+  var isLoading = false.obs;
+
+  Future<void> getLastOrder() async {
+    try {
+      isLoading.value = true;
+      getLastOrderModel.value = await OrdersRepository.getLastOrder();
+      isLoading.value = false;
+    } on UnauthorizedException {
+      isLoading.value = false;
+
+      AppToasts.showErrorToast(Get.context!, "Please, login again and try");
+    } catch (error) {
+      isLoading.value = false;
+
+      print(error);
+    }
+  }
+
   final NavbarController navbarController = Get.find<NavbarController>();
 
   late final List<CardModel> cardItems;
@@ -12,6 +35,7 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    getLastOrder();
     cardItems = [
       CardModel(
         cardColor: const Color(0xffC256E4).withAlpha(((0.3) * 255).toInt()),

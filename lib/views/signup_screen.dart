@@ -134,6 +134,8 @@ class SignupScreen extends GetView<SignupController> {
                         context.heightBox((context.screenHeight * 0.01)),
                         Obx(() {
                           return DropdownButtonFormField<Sector>(
+                            dropdownColor: Colors.white,
+                            
                             style: context.bodySmallStyle!.copyWith(
                               color: AppColors.greyTextColor,
                             ),
@@ -181,6 +183,7 @@ class SignupScreen extends GetView<SignupController> {
                             },
                             items: controller.sectors.map((sector) {
                               return DropdownMenuItem(
+                                
                                 value: sector,
                                 child: Text(sector.name),
                               );
@@ -298,10 +301,10 @@ class SignupScreen extends GetView<SignupController> {
 
                             if (pickedDate != null) {
                               // Format the date (optional)
-                              final formatted = "${pickedDate.year}-" "${pickedDate.month.toString().padLeft(2, '0')}-"
-                                  "${pickedDate.day.toString().padLeft(2, '0')}"
-                                 
-                                 ;
+                              final formatted =
+                                  "${pickedDate.year}-"
+                                  "${pickedDate.month.toString().padLeft(2, '0')}-"
+                                  "${pickedDate.day.toString().padLeft(2, '0')}";
                               controller.licenseExpiryDateController.text =
                                   formatted;
                             }
@@ -340,8 +343,8 @@ class SignupScreen extends GetView<SignupController> {
                         SizedBox(
                           width: double.infinity,
                           height: 50,
-                          child: Obx(()=>
-                             CustomButton(
+                          child: Obx(
+                            () => CustomButton(
                               isLoading: controller.isLoading.value,
                               radius: 20,
                               text: "Create an account",
@@ -350,6 +353,7 @@ class SignupScreen extends GetView<SignupController> {
                                     .validate()) {
                                   await controller.createUser();
                                 }
+                              
                               },
                               backgroundColor: AppColors.appPrimaryColor,
                             ),

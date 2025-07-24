@@ -1,3 +1,8 @@
+import 'package:anmol_marketing/core/utils/apptoast.dart';
+import 'package:anmol_marketing/core/utils/extensions.dart';
+import 'package:anmol_marketing/data/exceptions/app_exceptions.dart';
+import 'package:anmol_marketing/data/models/get_models/get_all_orders.dart';
+import 'package:anmol_marketing/data/repositories/orders_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -10,8 +15,8 @@ class OrderHistoryController extends GetxController {
   void onInit() {
     super.onInit();
     final now = DateTime.now();
-    fromDate.value = now;
-    toDate.value = now.add(Duration(days: 1));
+    fromDate.value = now.subtractDays(7);
+    toDate.value = now;
   }
 
   String formatDate(DateTime? date) {
@@ -37,5 +42,32 @@ class OrderHistoryController extends GetxController {
       lastDate: DateTime(2100),
     );
     if (picked != null) toDate.value = picked;
+  }
+
+  var isLoading = false.obs;
+  RxList<GetAllOrders> getAllOrdersList = RxList<GetAllOrders>();
+
+  Future getAllOrders() async {
+    try {
+      isLoading.value = true;
+      getAllOrdersList.value = await OrdersRepository.getAllOrders(
+        startingDate: DateFormat("yyyy-MM-dd").format(fromDate.value!),
+        toDate: DateFormat("yyyy-MM-dd").format(toDate.value!),
+      );
+      isLoading.value = false;
+    } on UnauthorizedException {
+      isLoading.value = false;
+      AppToasts.showErrorToast(Get.context!, "Please, login again and try");
+    } catch (error) {
+      isLoading.value = false;
+      AppToasts.showErrorToast(Get.context!, error.toString());
+    }
+  }
+
+  @override
+  void onReady() {
+    // TODO: implement onReady
+    super.onReady();
+    getAllOrders();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:anmol_marketing/controllers/confirm_order_controller.dart';
 import 'package:anmol_marketing/core/core.dart';
+import 'package:anmol_marketing/routes/app_routes.dart';
 import 'package:anmol_marketing/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,46 +12,59 @@ class ConfirmOrderScreen extends GetView<ConfirmOrderController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: Row(
+      bottomNavigationBar: Row(
         children: [
           Expanded(
-            child: Container(
-              height: 60,
-              color: AppColors.appPrimaryColor,
-              child: Row(
-                mainAxisAlignment: mainAxisCenter,
-                children: [
-                  Icon(Iconsax.edit, color: Colors.white),
-                  SizedBox(width: 10),
-                  Text(
-                    "Edit",
-                    style: context.bodyLargeStyle!.copyWith(
-                      color: AppColors.whiteTextColor,
-                      fontWeight: FontWeight.bold,
+            child: InkWell(
+              onTap: () {
+                Get.offNamed(AppRoutes.navbar);
+              },
+              child: Container(
+                height: 60,
+                color: AppColors.appPrimaryColor,
+                child: Row(
+                  mainAxisAlignment: mainAxisCenter,
+                  children: [
+                    Icon(Iconsax.edit, color: Colors.white),
+                    SizedBox(width: 10),
+                    Text(
+                      "Edit",
+                      style: context.bodyLargeStyle!.copyWith(
+                        color: AppColors.whiteTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
           Expanded(
-            child: Container(
-              height: 60,
-              color: Colors.green,
-              child: Row(
-                mainAxisAlignment: mainAxisCenter,
-                children: [
-                  Icon(Icons.done, color: Colors.white),
-                  SizedBox(width: 10),
-
-                  Text(
-                    "Place Order",
-                    style: context.bodyLargeStyle!.copyWith(
-                      color: AppColors.whiteTextColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+            child: InkWell(
+              onTap: () async {
+                await controller.createOrder();
+              },
+              child: Obx(
+                () => Container(
+                  height: 60,
+                  color: Colors.green,
+                  child: controller.isLoading.value == false
+                      ? Row(
+                          mainAxisAlignment: mainAxisCenter,
+                          children: [
+                            Icon(Icons.done, color: Colors.white),
+                            SizedBox(width: 10),
+                            Text(
+                              "Place Order",
+                              style: context.bodyLargeStyle!.copyWith(
+                                color: AppColors.whiteTextColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Center(child: LoadingIndicator(size: 30)),
+                ),
               ),
             ),
           ),
@@ -76,42 +90,32 @@ class ConfirmOrderScreen extends GetView<ConfirmOrderController> {
           Expanded(
             child: ListView.separated(
               padding: screenPadding,
-              itemCount: 5,
+              itemCount: controller.cartItems.length,
               itemBuilder: (context, index) {
+                final order = controller.cartItems[index];
                 return Container(
                   decoration: BoxDecoration(),
                   child: Row(
                     children: [
-                      Container(
-                        padding: padding5,
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: AppColors.darkGreyColor),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(2),
-                          child: Image.network(
-                            "https://dawailo.pk/wp-content/uploads/2021/07/Screenshot1-6.png",
-                            fit: BoxFit.contain,
-                          ),
-                        ),
+                      ProductImage(
+                        imageUrl: order.companyLogo,
+                        width: 40,
+                        height: 40,
                       ),
                       SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: crossAxisStart,
-                        
+
                           children: [
                             Text(
-                              "product.name",
-                              style: context.bodyMediumStyle!.copyWith(
+                              order.companyName,
+                              style: context.bodySmallStyle!.copyWith(
                                 color: AppColors.blackTextColor,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(height: 10,),
+                            SizedBox(height: 10),
                             Row(
                               mainAxisAlignment: mainAxisSpaceBetween,
                               children: [
@@ -125,7 +129,7 @@ class ConfirmOrderScreen extends GetView<ConfirmOrderController> {
                                     ),
                                     SizedBox(width: 5),
                                     Text(
-                                     "5",
+                                      "${order.totalProducts}",
                                       style: context.bodySmallStyle!.copyWith(
                                         color: AppColors.blackTextColor,
                                         fontWeight: FontWeight.bold,
@@ -133,7 +137,7 @@ class ConfirmOrderScreen extends GetView<ConfirmOrderController> {
                                     ),
                                   ],
                                 ),
-                                
+
                                 Row(
                                   children: [
                                     Text(
@@ -144,7 +148,7 @@ class ConfirmOrderScreen extends GetView<ConfirmOrderController> {
                                     ),
                                     SizedBox(width: 5),
                                     Text(
-                                     "Rs. 16000",
+                                      "Rs. ${order.companyTotal}",
                                       style: context.bodySmallStyle!.copyWith(
                                         color: AppColors.blackTextColor,
                                         fontWeight: FontWeight.bold,
@@ -166,7 +170,8 @@ class ConfirmOrderScreen extends GetView<ConfirmOrderController> {
               },
             ),
           ),
-           Container(
+
+          Container(
             padding: defaultPadding,
             width: double.infinity,
             height: 60,
@@ -178,11 +183,13 @@ class ConfirmOrderScreen extends GetView<ConfirmOrderController> {
                   crossAxisAlignment: crossAxisCenter,
                   mainAxisAlignment: mainAxisCenter,
                   children: [
-                    Text(
-                      "23",
-                      style: context.headlineSmallStyle!.copyWith(
-                        color: AppColors.blackTextColor,
-                        fontWeight: FontWeight.bold,
+                    Obx(
+                      () => Text(
+                        "${controller.totalProducts.value}",
+                        style: context.headlineSmallStyle!.copyWith(
+                          color: AppColors.blackTextColor,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     Text(
@@ -198,11 +205,13 @@ class ConfirmOrderScreen extends GetView<ConfirmOrderController> {
                   crossAxisAlignment: crossAxisCenter,
                   mainAxisAlignment: mainAxisCenter,
                   children: [
-                    Text(
-                      "Rs.123,000",
-                      style: context.headlineSmallStyle!.copyWith(
-                        color: AppColors.blackTextColor,
-                        fontWeight: FontWeight.bold,
+                    Obx(
+                      () => Text(
+                        "Rs. ${controller.totalAmount.value}",
+                        style: context.headlineSmallStyle!.copyWith(
+                          color: AppColors.blackTextColor,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     Text(
@@ -217,7 +226,6 @@ class ConfirmOrderScreen extends GetView<ConfirmOrderController> {
               ],
             ),
           ),
-         
         ],
       ),
     );

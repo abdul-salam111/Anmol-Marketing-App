@@ -1,9 +1,11 @@
 import 'package:anmol_marketing/controllers/home_controller.dart';
 import 'package:anmol_marketing/core/core.dart';
-import 'package:anmol_marketing/services/storage.dart';
+import 'package:anmol_marketing/services/session_manager.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
@@ -47,10 +49,14 @@ class HomeScreen extends GetView<HomeController> {
                                 bottomRight: Radius.circular(15),
                               ),
                             ),
-                            child: Text(
-                              "Last Order",
-                              style: context.displayLargeStyle!.copyWith(
-                                color: AppColors.whiteTextColor,
+                            child: Obx(
+                              () => Text(
+                                controller.isLoading.value
+                                    ? "Loading"
+                                    : "Last Order",
+                                style: context.displayLargeStyle!.copyWith(
+                                  color: AppColors.whiteTextColor,
+                                ),
                               ),
                             ),
                           ),
@@ -70,11 +76,20 @@ class HomeScreen extends GetView<HomeController> {
                                     ),
                                   ),
                                   SizedBox(height: 4),
-                                  Text(
-                                    '20, August 2024',
-                                    style: context.bodySmallStyle!.copyWith(
-                                      color: Colors.white,
-                                      fontSize: 12,
+                                  Obx(
+                                    () => Text(
+                                      controller.isLoading.value
+                                          ? ""
+                                          : DateFormat('d, MMMM yyyy').format(
+                                              controller
+                                                  .getLastOrderModel
+                                                  .value
+                                                  .docDate!,
+                                            ),
+                                      style: context.bodySmallStyle!.copyWith(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -92,11 +107,13 @@ class HomeScreen extends GetView<HomeController> {
                                     ),
                                   ),
                                   SizedBox(height: 4),
-                                  Text(
-                                    'Rs. 20,000',
-                                    style: context.bodySmallStyle!.copyWith(
-                                      color: Colors.white,
-                                      fontSize: 12,
+                                  Obx(
+                                    () => Text(
+                                      'Rs. ${controller.isLoading.value ? "" : controller.getLastOrderModel.value.amount}',
+                                      style: context.bodySmallStyle!.copyWith(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -114,12 +131,16 @@ class HomeScreen extends GetView<HomeController> {
                                     ),
                                   ),
                                   SizedBox(height: 4),
-                                  Text(
-                                    'In Progress',
-                                    style: context.bodySmallStyle!.copyWith(
-                                      color: Colors.greenAccent,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
+                                  Obx(
+                                    () => Text(
+                                      controller.isLoading.value
+                                          ? ""
+                                          : '${controller.getLastOrderModel.value.status}',
+                                      style: context.bodySmallStyle!.copyWith(
+                                        color: Colors.greenAccent,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -147,36 +168,55 @@ class HomeScreen extends GetView<HomeController> {
                           Row(
                             children: [
                               CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  'https://t4.ftcdn.net/jpg/02/14/74/61/360_F_214746128_31JkeaP6rU0NzzzdFC4khGkmqc8noe6h.jpg',
-                                ),
                                 radius: 34,
+                                backgroundImage:
+                                    (SessionController()
+                                                .getUserDetails
+                                                .customer
+                                                ?.logo !=
+                                            null &&
+                                        SessionController()
+                                            .getUserDetails
+                                            .customer!
+                                            .logo!
+                                            .isNotEmpty)
+                                    ? CachedNetworkImageProvider(
+                                        SessionController()
+                                            .getUserDetails
+                                            .customer!
+                                            .logo!,
+                                      )
+                                    : NetworkImage(AppIcons.profiledefault)
+                                          as ImageProvider,
                               ),
                               const SizedBox(width: 10),
-                              Column(
-                                crossAxisAlignment: crossAxisStart,
-                                children: [
-                                  Text(
-                                    'GlaxoSmithKline Pharma',
-                                    style: context.bodySmallStyle!.copyWith(
-                                      color: AppColors.whiteTextColor,
-                                      fontWeight: FontWeight.bold,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: crossAxisStart,
+                                  children: [
+                                    Text(
+                                      '${SessionController().getUserDetails.customer?.customerName}',
+                                      style: context.bodySmallStyle!.copyWith(
+                                        color: AppColors.whiteTextColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    "Current Balance",
-                                    style: context.displayLargeStyle!.copyWith(
-                                      color: AppColors.darkGreyColor,
+                                    Text(
+                                      "Current Balance",
+                                      style: context.displayLargeStyle!
+                                          .copyWith(
+                                            color: AppColors.darkGreyColor,
+                                          ),
                                     ),
-                                  ),
-                                  Text(
-                                    'Rs. 45,000',
-                                    style: context.bodyMediumStyle!.copyWith(
-                                      color: AppColors.whiteTextColor,
-                                      fontWeight: FontWeight.bold,
+                                    Text(
+                                      'Rs. ${SessionController().getUserDetails.customer?.balance}',
+                                      style: context.bodyMediumStyle!.copyWith(
+                                        color: AppColors.whiteTextColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ],
                           ),

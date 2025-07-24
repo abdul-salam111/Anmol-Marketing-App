@@ -128,13 +128,18 @@ class PhoneVerificationScreen extends GetView<PhoneVerificationController> {
               SizedBox(
                 width: double.infinity,
                 height: 50,
-                child: CustomButton(
-                  radius: 20,
-                  text: "Verify",
-                  onPressed: () {
-                    if (controller.formKey.currentState!.validate()) {}
-                  },
-                  backgroundColor: AppColors.appPrimaryColor,
+                child: Obx(()=>
+                   CustomButton(
+                    isLoading: controller.isLoading.value,
+                    radius: 20,
+                    text: "Verify",
+                    onPressed: () async{
+                      if (controller.formKey.currentState!.validate()) {
+                        controller.verifyOpt();
+                      }
+                    },
+                    backgroundColor: AppColors.appPrimaryColor,
+                  ),
                 ),
               ),
               context.heightBox((context.screenHeight * 0.03)),

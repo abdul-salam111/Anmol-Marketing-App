@@ -48,9 +48,7 @@ class Validator {
     if (value == null || value.trim().isEmpty) {
       return 'Password is required';
     }
-    if (!value.isValidPassword) {
-      return 'Password must be at least 6 characters';
-    }
+  
     return null;
   }
 

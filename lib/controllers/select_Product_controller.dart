@@ -2,106 +2,165 @@ import 'package:anmol_marketing/controllers/controllers.dart';
 import 'package:anmol_marketing/data/database/database_helper.dart';
 import 'package:anmol_marketing/data/models/get_models/get_companies.dart';
 import 'package:anmol_marketing/data/models/get_models/get_products.dart';
-import 'package:anmol_marketing/data/models/post_models/create_order.dart';
+import 'package:anmol_marketing/data/models/post_models/create_order_for_local.dart';
 import 'package:anmol_marketing/data/repositories/products_repository.dart'
     show ProductsRepository;
 import 'package:anmol_marketing/routes/app_routes.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SelectProductController extends GetxController {
-  RxDouble companyTotal =
-      0.0.obs; // total of the selected products in that company
-  RxDouble totalAmount = 0.0.obs; // grand total of overall orders
+  // Selected company's total order amount
+  RxDouble companyTotal = 0.0.obs;
 
-  // Fetch products by company id from api
+  // Overall total order amount (shared with CreateOrderController)
+  RxDouble totalAmount = 0.0.obs;
+
+  // Products and filtered products
   RxList<GetProductsModel> products = <GetProductsModel>[].obs;
-  RxList<GetProductsModel> filteredProducts =
-      <GetProductsModel>[].obs; // For search results
+  RxList<GetProductsModel> filteredProducts = <GetProductsModel>[].obs;
+
+  // Arguments from navigation
   late GetCompaniesModel company;
   OrderCompany? orderCompany;
+
+  // UI state variables
   RxString searchQuery = "".obs;
   RxBool isLoading = false.obs;
+
+  // Quantity map: Product -> Quantity
+  final RxMap<GetProductsModel, int> productQuantities =
+      <GetProductsModel, int>{}.obs;
+
   final DatabaseHelper _databaseHelper = DatabaseHelper();
+
+  // Reference to CreateOrderController for updating shared values
+  final CreateOrderController createOrderController =
+      Get.find<CreateOrderController>();
+
+  // Called when the controller is initialized
+  @override
+  void onInit() {
+    super.onInit();
+    resetState();
+
+    // Get and validate navigation arguments
+    if (Get.arguments != null && Get.arguments.length >= 2) {
+      if (Get.arguments[0] is GetCompaniesModel) {
+        company = Get.arguments[0];
+      } else if (Get.arguments[0] is OrderCompany) {
+        orderCompany = Get.arguments[0];
+        company = GetCompaniesModel(
+          companyId: orderCompany!.companyId,
+          companyLogo: orderCompany!.companyLogo,
+          companyName: orderCompany!.companyName,
+        );
+      }
+      totalAmount = Get.arguments[1];
+    }
+
+    fetchProducts();
+  }
+
+  // Called when the controller is destroyed
+  @override
+  void onClose() {
+    resetState();
+    super.onClose();
+  }
+
+  /// Reset all controller data
+  void resetState() {
+    companyTotal.value = 0.0;
+    products.clear();
+    filteredProducts.clear();
+    productQuantities.clear();
+    searchQuery.value = "";
+    isLoading.value = false;
+    company = GetCompaniesModel(); // Reset company object
+    orderCompany = null;
+  }
+
+  /// Fetch products for the selected company
   Future<void> fetchProducts() async {
     try {
       isLoading.value = true;
-      products.clear(); // Clear existing products
+      products.clear();
       filteredProducts.clear();
-      productQuantities.clear(); // Clear any existing quantities
-      if (orderCompany == null) {
-        products.value = await ProductsRepository.getCompanyProducts(
-          company.companyId!.toString(),
-        );
-      } else {
-        products.value = await ProductsRepository.getCompanyProducts(
-          company.companyId!.toString(),
-        );
+      productQuantities.clear();
+
+      // Fetch company products from API
+      products.value = await ProductsRepository.getCompanyProducts(
+        company.companyId!.toString(),
+      );
+
+      // Pre-fill product quantities if it's an existing order
+      if (orderCompany != null) {
         for (var orderedProduct in orderCompany!.products) {
           final matchingProduct = products.firstWhereOrNull(
             (p) => p.productId == orderedProduct.productId,
           );
-
           if (matchingProduct != null) {
             productQuantities[matchingProduct] = orderedProduct.quantity;
           }
-
-          companyTotal.value = orderCompany!.companyTotal;
         }
+
+        companyTotal.value = orderCompany!.companyTotal;
       }
 
+      // Assign to filteredProducts for search
       filteredProducts.assignAll(products);
-      print(orderCompany!.products.map((e) => e));
       isLoading.value = false;
     } catch (e) {
       isLoading.value = false;
-
-      print(e);
+      print('Error fetching products: $e');
     }
   }
 
+  /// Filter products by search query
   void searchProduct(String query) {
     searchQuery.value = query.toLowerCase();
 
     if (query.isEmpty) {
-      // If search is empty, show all products
       filteredProducts.value = products;
     } else {
-      // Filter products where productName contains the query (case-insensitive)
       filteredProducts.value = products.where((product) {
         return product.productName!.toLowerCase().contains(searchQuery.value);
       }).toList();
     }
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-resetState();
-    if (Get.arguments[0] is GetCompaniesModel) {
-      company = Get.arguments[0];
-    } else {
-      orderCompany = Get.arguments[0];
-      company = GetCompaniesModel(
-        companyId: orderCompany!.companyId,
-        companyLogo: orderCompany!.companyLogo,
-        companyName: orderCompany!.companyName,
-      );
-    }
-    totalAmount = Get.arguments[1];
-    fetchProducts();
+  /// Update quantity of a selected product
+  void updateProductQuantity(GetProductsModel product, int quantity) {
+    // Save the current total BEFORE updating
+    final previousCompanyTotal = companyTotal.value;
 
-    debounce(
-      searchQuery.value.obs,
-      (_) => searchProduct(searchQuery.value.toString().trim()),
-      time: const Duration(milliseconds: 300),
-    );
+    // Update or remove product from the map
+    if (quantity <= 0) {
+      productQuantities.remove(product);
+    } else {
+      productQuantities[product] = quantity;
+    }
+
+    // Recalculate the company total
+    calculateTotals();
+
+    // Update the shared grand total by adjusting the difference
+    updateGrandTotalAmount(previousCompanyTotal);
   }
 
-  CreateOrderController createOrderController =
-      Get.find<CreateOrderController>();
-  final RxMap<GetProductsModel, int> productQuantities =
-      <GetProductsModel, int>{}.obs;
+  /// Recalculate company total from selected products
+  void calculateTotals() {
+    double companyTotalValue = 0.0;
 
+    productQuantities.forEach((product, qty) {
+      companyTotalValue += product.tradePrice! * qty;
+    });
+
+    companyTotal.value = companyTotalValue;
+  }
+
+  /// Save order to local database
   Future<void> saveOrder() async {
     try {
       if (productQuantities.isEmpty) {
@@ -120,25 +179,22 @@ resetState();
       String orderId = '';
       bool isNewOrder = true;
 
-      // Check if this company already has an order
+      // Check if an order already exists for this company
       final existingOrders = await _databaseHelper.getAllOrders();
       final existingOrder = existingOrders.firstWhereOrNull(
         (order) => order.companies.any((c) => c.companyId == company.companyId),
       );
 
       if (existingOrder != null) {
-        // Update existing order
-        orderId = existingOrder.orderId;
         isNewOrder = false;
+        orderId = existingOrder.orderId;
 
-        // Check if company exists in this order
         final companyExists = await _databaseHelper.doesCompanyExistInOrder(
           orderId,
           company.companyId!,
         );
 
         if (companyExists) {
-          // Update existing company in order
           await _databaseHelper.updateOrderCompany(
             orderId: orderId,
             company: company,
@@ -146,13 +202,11 @@ resetState();
             totalProducts: totalProductsCount,
           );
 
-          // Delete existing products for this company
           await _databaseHelper.deleteOrderProducts(
             orderId,
             company.companyId!,
           );
         } else {
-          // Add new company to existing order
           await _databaseHelper.addOrderCompany(
             orderId: orderId,
             company: company,
@@ -169,7 +223,6 @@ resetState();
 
         if (orderId.isEmpty) throw Exception('Failed to create order');
 
-        // Add company to order
         await _databaseHelper.addOrderCompany(
           orderId: orderId,
           company: company,
@@ -178,7 +231,7 @@ resetState();
         );
       }
 
-      // Add all products to the order
+      // Add all products to order
       for (final entry in productQuantities.entries) {
         final product = entry.key;
         final quantity = entry.value;
@@ -192,12 +245,12 @@ resetState();
         );
       }
 
-      // Update order totals if it's an existing order
+      // Update order totals if existing order
       if (!isNewOrder) {
-        // Recalculate the grand total for the order
         final orderCompanies = await _databaseHelper.getOrderCompanies(orderId);
         double newGrandTotal = 0.0;
         int newTotalProducts = 0;
+
 
         for (var comp in orderCompanies) {
           newGrandTotal += comp['companyTotal'] as double;
@@ -211,24 +264,30 @@ resetState();
         );
       }
 
-      // Remove company from catalog if it exists
-      final exists = createOrderController.companies.any(
+      // Remove company from catalog (if it exists)
+      final existsInCatalog = createOrderController.companies.any(
         (comp) => comp.companyId == company.companyId,
       );
 
-      if (exists) {
+      if (existsInCatalog) {
         await _databaseHelper.deleteCompanyById(company.companyId!);
       }
-      await createOrderController.fetchOrders();
-      await createOrderController.fetchTotalAmount();
-      await createOrderController.fetchTotalProducts();
 
-      Get.toNamed(AppRoutes.navbar);
-      Get.snackbar(
-        'Success',
-        isNewOrder
-            ? 'Order created successfully'
-            : 'Order updated successfully',
+      // Refresh order page data and navigate back
+      await createOrderController.refreshCreateOrderPageData();
+
+      Get.offNamed(AppRoutes.navbar);
+
+      ScaffoldMessenger.of(Get.context!).showSnackBar(
+        SnackBar(
+          content: Text(
+            isNewOrder
+                ? 'Item added successfully!'
+                : 'Item updated successfully!',
+          ),
+
+          duration: Duration(seconds: 2), // Optional
+        ),
       );
     } catch (e) {
       print('Error saving order: $e');
@@ -236,39 +295,8 @@ resetState();
     }
   }
 
-  void updateProductQuantity(GetProductsModel product, int quantity) {
-    if (quantity <= 0) {
-      productQuantities.remove(product);
-    } else {
-      productQuantities[product] = quantity;
-    }
-
-    calculateTotals();
-  }
-
-  void calculateTotals() {
-    double companyTotalValue = 0.0;
-
-    productQuantities.forEach((product, qty) {
-      companyTotalValue += product.tradePrice! * qty;
-    });
-
-    companyTotal.value = companyTotalValue;
-    // Don't accumulate here - just set the current company's total
-    // The CreateOrderController will handle summing all companies' totals
-  }
-
-   void resetState() {
-    companyTotal.value = 0.0;
-    products.clear();
-    filteredProducts.clear();
-    productQuantities.clear();
-    searchQuery.value = "";
-    isLoading.value = false;
-  }
-  @override
-  void onClose() {
-    resetState(); // Clean up when controller is closed
-    super.onClose();
+  void updateGrandTotalAmount(double previousCompanyTotal) {
+    totalAmount.value =
+        totalAmount.value - previousCompanyTotal + companyTotal.value;
   }
 }

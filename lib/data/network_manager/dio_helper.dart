@@ -60,7 +60,7 @@ class DioHelper {
         data: requestBody,
         options: requestOptions,
       );
-      
+
       return response.data;
     } on DioException catch (error) {
       _handleDioError(error);
@@ -165,12 +165,14 @@ class DioHelper {
         throw RequestTimeoutException(error.message);
       case DioExceptionType.badResponse:
         final statusCode = error.response?.data['StatusCode'];
-        
+
         switch (statusCode) {
           case 401:
             throw UnauthorizedException(
               "Session expired. Please log in again to continue.",
             );
+          case 4001:
+            throw InvalidInputException("The entered OTP is incorrect!");
           case 4002:
             throw InvalidInputException("Invalid Input");
           case 6001:

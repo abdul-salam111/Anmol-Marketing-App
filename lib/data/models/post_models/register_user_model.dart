@@ -19,7 +19,7 @@ class RegisterUserModel {
 
   final String? owerName;
   final String? address;
-  final String? phoneWork;
+
   final String? licenseExpiryDate;
 
   RegisterUserModel({
@@ -31,7 +31,7 @@ class RegisterUserModel {
 
     this.owerName,
     this.address,
-    this.phoneWork,
+
     this.licenseExpiryDate,
   });
 
@@ -43,7 +43,7 @@ class RegisterUserModel {
     String? licenseNbr,
     String? owerName,
     String? address,
-    String? phoneWork,
+
     String? licenseExpiryDate,
   }) => RegisterUserModel(
     customerName: customerName ?? this.customerName,
@@ -54,7 +54,7 @@ class RegisterUserModel {
 
     owerName: owerName ?? this.owerName,
     address: address ?? this.address,
-    phoneWork: phoneWork ?? this.phoneWork,
+
     licenseExpiryDate: licenseExpiryDate ?? this.licenseExpiryDate,
   );
 
@@ -68,7 +68,7 @@ class RegisterUserModel {
 
         owerName: json["OwerName"],
         address: json["Address"],
-        phoneWork: json["PhoneWork"],
+
         licenseExpiryDate: json["LicenseExpiryDate"],
       );
 
@@ -78,10 +78,8 @@ class RegisterUserModel {
     "Password": password,
     "LocationId": locationId,
     "LicenseNbr": licenseNbr,
-
     "OwerName": owerName,
     "Address": address,
-    "PhoneWork": phoneWork,
     "LicenseExpiryDate": licenseExpiryDate,
   };
 }

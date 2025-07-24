@@ -1,59 +1,56 @@
-import 'package:anmol_marketing/data/database/database_helper.dart';
 import 'package:anmol_marketing/data/models/get_models/get_companies.dart';
-
+import 'package:anmol_marketing/data/repositories/companies_repo.dart';
 import 'package:get/get.dart';
 
 class CatalogueController extends GetxController {
-  final searchQuery = "".obs;
-  RxList<GetCompaniesModel> companies = <GetCompaniesModel>[].obs;
-  RxList<GetCompaniesModel> filterCompanies = <GetCompaniesModel>[].obs;
+  // Search input from user
+  final RxString searchQuery = "".obs;
 
-  RxBool isLoading = false.obs;
-  DatabaseHelper databaseHelper = DatabaseHelper();
-  RxString errorMessage = ''.obs;
+  // All companies fetched from DB
+  final RxList<GetCompaniesModel> companies = <GetCompaniesModel>[].obs;
+
+  // Filtered companies shown in UI
+  final RxList<GetCompaniesModel> filterCompanies = <GetCompaniesModel>[].obs;
+
+  // Loading and error state
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
 
   @override
   void onReady() {
     super.onReady();
     fetchCompanies();
 
-    // Initialize filterCompanies with empty list
-    filterCompanies.value = [];
-
+    // Listen to changes in searchQuery and apply filtering
     ever(searchQuery, (value) {
       searchCompanies(value.trim());
     });
   }
 
+  /// Fetch companies from the catalog table in local DB
   Future<void> fetchCompanies() async {
     try {
-      isLoading(true);
-      errorMessage('');
-      filterCompanies.value = []; // Clear while loading
-
-      final localCompanies = await databaseHelper.getCatalogCompanies();
-
-      if (localCompanies.isNotEmpty) {
-        companies.value = localCompanies;
-        filterCompanies.value = localCompanies;
-
-        return;
-      }
+      isLoading.value = true;
+      errorMessage.value = '';
+      filterCompanies.clear();
+      final localCompanies = await CompaniesRepository.fetchCatalogCompanies();
+      companies.value = localCompanies;
+      filterCompanies.value = localCompanies;
     } catch (e) {
       errorMessage.value = 'Failed to load companies';
-      print('Error: $e');
     } finally {
-      isLoading(false);
+      isLoading.value = false;
     }
   }
 
+  /// Filter companies based on search query
   void searchCompanies(String query) {
     if (query.isEmpty) {
-      filterCompanies.value = companies.toList();
+      filterCompanies.value = companies;
     } else {
-      final queryLower = query.toLowerCase();
+      final lowerQuery = query.toLowerCase();
       filterCompanies.value = companies
-          .where((c) => c.companyName!.toLowerCase().contains(queryLower))
+          .where((c) => c.companyName!.toLowerCase().contains(lowerQuery))
           .toList();
     }
   }

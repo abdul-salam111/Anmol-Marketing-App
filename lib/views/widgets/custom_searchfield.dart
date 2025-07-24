@@ -20,30 +20,35 @@ class CustomSearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      autofocus: false,
-      controller: controller,
-      onChanged: onChanged,
-      onTap: onTap,
-      readOnly: readOnly,
-      style: context.bodyMediumStyle!.copyWith(color: AppColors.greyColor),
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: context.bodyMediumStyle!.copyWith(
-          color: AppColors.greyColor,
-        ),
-        prefixIcon: Icon(Iconsax.search_normal, color: AppColors.greyColor),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: AppColors.darkGreyColor),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: AppColors.darkGreyColor),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: AppColors.greyColor),
+    return SizedBox(
+      
+      child: TextField(
+        autofocus: false,
+        controller: controller,
+        onChanged: onChanged,
+        onTap: onTap,
+        readOnly: readOnly,
+      
+        style: context.bodySmallStyle!.copyWith(color: AppColors.greyColor),
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.zero,
+          hintText: hintText,
+          hintStyle: context.bodySmallStyle!.copyWith(
+            color: AppColors.greyColor,
+          ),
+          prefixIcon: Icon(Iconsax.search_normal, color: AppColors.greyColor,size: 20,),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: AppColors.darkGreyColor),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: AppColors.darkGreyColor),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: AppColors.greyColor),
+          ),
         ),
       ),
     );
