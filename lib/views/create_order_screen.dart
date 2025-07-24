@@ -156,25 +156,18 @@ class CreateOrderScreen extends GetView<CreateOrderController> {
             ),
     
             SizedBox(height: 10),
-            Padding(
-              padding: screenPadding,
-              child: Text(
-                "Select Companies",
-                style: context.bodySmallStyle!.copyWith(
-                  color: AppColors.greyTextColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
+          
+        
     
             Padding(
               padding: screenPadding,
               child: SizedBox(
                 height: 40,
                 child: CustomSearchField(
+                  hintText:  "Select Companies",
                   onChanged: (value) {
                     controller.searchQuery.value = value;
+                  
                   },
                 ),
               ),

@@ -1,3 +1,4 @@
+import 'package:anmol_marketing/controllers/controllers.dart';
 import 'package:anmol_marketing/controllers/navbar_controller.dart';
 import 'package:anmol_marketing/core/core.dart';
 import 'package:anmol_marketing/core/utils/apptoast.dart';
@@ -43,6 +44,7 @@ class HomeController extends GetxController {
         cardName: "Create Order",
         onTap: () {
           navbarController.currentIndex.value = 2;
+          Get.find<CreateOrderController>().fetchCompanies();
         },
         textColor: const Color(0xffC256E4),
       ),
@@ -66,6 +68,8 @@ class HomeController extends GetxController {
         cardName: "My Orders",
         onTap: () {
           navbarController.currentIndex.value = 3;
+          Get.find<OrderHistoryController>().getAllOrders();
+
         },
         textColor: const Color.fromARGB(255, 12, 90, 225),
       ),
@@ -93,6 +97,7 @@ class HomeController extends GetxController {
         cardName: "Product Catalog",
         onTap: () {
           navbarController.currentIndex.value = 1;
+          Get.find<CatalogueController>().fetchCompanies();
         },
         textColor: Colors.cyan,
       ),

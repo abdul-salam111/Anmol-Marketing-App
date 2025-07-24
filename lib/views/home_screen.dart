@@ -167,27 +167,25 @@ class HomeScreen extends GetView<HomeController> {
                         children: [
                           Row(
                             children: [
-                              CircleAvatar(
-                                radius: 34,
-                                backgroundImage:
-                                    (SessionController()
-                                                .getUserDetails
-                                                .customer
-                                                ?.logo !=
-                                            null &&
-                                        SessionController()
-                                            .getUserDetails
-                                            .customer!
-                                            .logo!
-                                            .isNotEmpty)
-                                    ? CachedNetworkImageProvider(
-                                        SessionController()
-                                            .getUserDetails
-                                            .customer!
-                                            .logo!,
-                                      )
-                                    : NetworkImage(AppIcons.profiledefault)
-                                          as ImageProvider,
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(50),
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      SessionController()
+                                          .getUserDetails
+                                          .customer
+                                          ?.logo ??
+                                      '',
+                                  placeholder: (context, url) =>
+                                      const CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      CachedNetworkImage(
+                                        imageUrl: AppIcons.profiledefault,
+                                      ),
+                                  width: 70,
+                                  height: 70,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                               const SizedBox(width: 10),
                               Expanded(

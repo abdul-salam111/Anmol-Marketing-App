@@ -44,29 +44,27 @@ class ProfileScreen extends GetView<ProfileController> {
                     child: Column(
                       mainAxisAlignment: mainAxisCenter,
                       children: [
-                        CircleAvatar(
-                          radius: 40,
-                          backgroundImage:
-                              (SessionController()
-                                          .getUserDetails
-                                          .customer
-                                          ?.logo !=
-                                      null &&
-                                  SessionController()
-                                      .getUserDetails
-                                      .customer!
-                                      .logo!
-                                      .isNotEmpty)
-                              ? CachedNetworkImageProvider(
-                                  SessionController()
-                                      .getUserDetails
-                                      .customer!
-                                      .logo!,
-                                )
-                              : NetworkImage(AppIcons.profiledefault)
-                                    as ImageProvider,
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(50),
+                          child: CachedNetworkImage(
+                            imageUrl:
+                                SessionController()
+                                    .getUserDetails
+                                    .customer
+                                    ?.logo ??
+                                '',
+                            placeholder: (context, url) =>
+                                const CircularProgressIndicator(),
+                            errorWidget: (context, url, error) =>
+                                CachedNetworkImage(
+                                  imageUrl: AppIcons.profiledefault,
+                                ),
+                            width: 130,
+                            height: 130,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                        SizedBox(height: 20),
+
                         Text(
                           "${SessionController().getUserDetails.customer?.customerName}",
                           style: context.bodyMediumStyle!.copyWith(
