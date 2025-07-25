@@ -81,6 +81,7 @@ class ViewProductsScreen extends GetView<ViewProductsController> {
                                   crossAxisAlignment: crossAxisStart,
                                   children: [
                                     ProductImage(
+                                      cacheKey: product.productId.toString(),
                                       imageUrl: product.productLogo!,
                                       width: context.screenWidth / 2,
                                       height: context.screenHeight * 0.15,

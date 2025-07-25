@@ -82,9 +82,9 @@ class CreateOrderScreen extends GetView<CreateOrderController> {
           crossAxisAlignment: crossAxisStart,
           children: [
             // SizedBox(height: 10
-    
+
             // ),
-    
+
             // Padding(
             //   padding: screenPadding,
             //   child: SizedBox(
@@ -97,7 +97,7 @@ class CreateOrderScreen extends GetView<CreateOrderController> {
             //   ),
             // ),
             _buildOrdersList(),
-    
+
             SizedBox(height: 5),
             Container(
               padding: defaultPadding,
@@ -135,7 +135,7 @@ class CreateOrderScreen extends GetView<CreateOrderController> {
                     children: [
                       Obx(
                         () => Text(
-                          "Rs. ${controller.totalAmount.value == 0 ? 0 : controller.totalAmount.value}",
+                          "Rs. ${controller.totalAmount.value == 0 ? 0 : context.formatPrice(controller.totalAmount.value)}",
                           style: context.headlineSmallStyle!.copyWith(
                             color: AppColors.blackTextColor,
                             fontWeight: FontWeight.bold,
@@ -154,20 +154,17 @@ class CreateOrderScreen extends GetView<CreateOrderController> {
                 ],
               ),
             ),
-    
+
             SizedBox(height: 10),
-          
-        
-    
+
             Padding(
               padding: screenPadding,
               child: SizedBox(
                 height: 40,
                 child: CustomSearchField(
-                  hintText:  "Select Companies",
+                  hintText: "Select Companies",
                   onChanged: (value) {
                     controller.searchQuery.value = value;
-                  
                   },
                 ),
               ),
@@ -232,20 +229,27 @@ class CreateOrderScreen extends GetView<CreateOrderController> {
   Widget _buildOrdersList() {
     return Obx(() {
       if (controller.isLoading.value) {
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       }
 
       if (controller.cartItems.isEmpty) {
-        return Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text("Please, select company and add products."),
-          ),
+        return const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text("Please, select company and add products."),
         );
       }
 
-      return Expanded(
+      // Determine max height (e.g., 3 items x 100px = 300px max height)
+      const double maxListHeight = 200;
+
+      return ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: controller.cartItems.length > 3
+              ? maxListHeight
+              : double.infinity, // Let it grow naturally if <= 3
+        ),
         child: ListView.builder(
+          shrinkWrap: true,
           padding: screenPadding,
           itemCount: controller.cartItems.length,
           itemBuilder: (context, index) {
@@ -337,7 +341,9 @@ class CreateOrderScreen extends GetView<CreateOrderController> {
 
   void _confirmClearAllOrders() {
     Get.dialog(
+  
       AlertDialog(
+        backgroundColor: Colors.white,
         title: Text('Clear All Orders'),
         content: Text(
           'Are you sure you want to delete ALL orders? This cannot be undone.',

@@ -66,6 +66,7 @@ class CatalogueScreen extends GetView<CatalogueController> {
                           },
                           contentPadding: EdgeInsets.zero,
                           leading: ProductImage(
+                            cacheKey: company.companyId.toString(),
                             imageUrl: company.companyLogo ?? "",
                             width: 50,
                             height: 50,

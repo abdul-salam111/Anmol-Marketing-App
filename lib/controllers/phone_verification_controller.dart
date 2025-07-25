@@ -1,5 +1,4 @@
 import 'package:anmol_marketing/core/utils/apptoast.dart';
-import 'package:anmol_marketing/data/data.dart';
 import 'package:anmol_marketing/data/models/post_models/verify_otp.dart';
 import 'package:anmol_marketing/data/repositories/auth_repository.dart';
 import 'package:anmol_marketing/routes/app_routes.dart';

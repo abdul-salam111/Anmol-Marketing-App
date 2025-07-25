@@ -8,6 +8,7 @@ class ProductImage extends StatelessWidget {
   final double? width;
   final EdgeInsetsGeometry? padding;
   final BoxBorder? border;
+  final String? cacheKey;
 
   const ProductImage({
     super.key,
@@ -16,6 +17,7 @@ class ProductImage extends StatelessWidget {
     this.width,
     this.padding,
     this.border,
+    this.cacheKey,
   });
 
   @override
@@ -28,12 +30,16 @@ class ProductImage extends StatelessWidget {
       ),
       child: CachedNetworkImage(
         imageUrl: imageUrl,
+        cacheKey: cacheKey,
         height: height ?? context.screenHeight * 0.1,
         width: width ?? context.screenWidth * 0.25,
         fit: BoxFit.contain,
-
+        placeholder: (context, url) => const Center(),
         errorWidget: (context, url, error) =>
             const Icon(Icons.broken_image, size: 40),
+        useOldImageOnUrlChange: true,
+        maxWidthDiskCache: 200,
+        maxHeightDiskCache: 200,
       ),
     );
   }

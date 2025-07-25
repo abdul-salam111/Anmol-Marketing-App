@@ -24,8 +24,6 @@ class HomeController extends GetxController {
       AppToasts.showErrorToast(Get.context!, "Please, login again and try");
     } catch (error) {
       isLoading.value = false;
-
-      print(error);
     }
   }
 
@@ -69,7 +67,6 @@ class HomeController extends GetxController {
         onTap: () {
           navbarController.currentIndex.value = 3;
           Get.find<OrderHistoryController>().getAllOrders();
-
         },
         textColor: const Color.fromARGB(255, 12, 90, 225),
       ),

@@ -146,7 +146,7 @@ class OrdersHistoryScreen extends GetView<OrderHistoryController> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 3.0),
                                   child: Text(
-                                    "${order.amount}",
+                                    context.formatPrice(order.amount!),
                                     style: context.displayLargeStyle!,
                                   ),
                                 ),
@@ -163,7 +163,14 @@ class OrdersHistoryScreen extends GetView<OrderHistoryController> {
                                       padding: EdgeInsets.all(5),
                                       child: Center(
                                         child: Text(
-                                          order.status.toString(),
+                                          order.status
+                                                  .toString()
+                                                  .toLowerCase()
+                                                  .contains(
+                                                    "delivery in process",
+                                                  )
+                                              ? "In Process"
+                                              : "Recieved",
                                           style: context.displayMediumStyle!,
                                         ),
                                       ),

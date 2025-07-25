@@ -56,7 +56,7 @@ class SelectProductController extends GetxController {
           companyName: orderCompany!.companyName,
         );
       }
-      totalAmount = Get.arguments[1];
+     totalAmount = RxDouble(Get.arguments[1].value);
     }
 
     fetchProducts();

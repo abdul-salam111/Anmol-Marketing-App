@@ -148,7 +148,7 @@ class ConfirmOrderScreen extends GetView<ConfirmOrderController> {
                                     ),
                                     SizedBox(width: 5),
                                     Text(
-                                      "Rs. ${order.companyTotal}",
+                                      "Rs. ${context.formatPrice(order.companyTotal)}",
                                       style: context.bodySmallStyle!.copyWith(
                                         color: AppColors.blackTextColor,
                                         fontWeight: FontWeight.bold,
@@ -207,7 +207,7 @@ class ConfirmOrderScreen extends GetView<ConfirmOrderController> {
                   children: [
                     Obx(
                       () => Text(
-                        "Rs. ${controller.totalAmount.value}",
+                        "Rs. ${context.formatPrice(controller.totalAmount.value)}",
                         style: context.headlineSmallStyle!.copyWith(
                           color: AppColors.blackTextColor,
                           fontWeight: FontWeight.bold,

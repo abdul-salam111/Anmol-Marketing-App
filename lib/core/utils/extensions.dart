@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 
 extension DateTimeExtensions on DateTime {
 //////////////////////////////////// DATE EXTENSION/////////////////////////////////////////
@@ -283,6 +284,11 @@ extension WidgetExtensions on Widget {
 
 ///////////////////////////////// BUILD CONTEXT /////////////////////////////////////////////////
 extension ContextExtensions on BuildContext {
+   String formatPrice(num price, {String? symbol}) {
+    final formatter = NumberFormat('#,###');
+    final formatted = formatter.format(price);
+    return symbol != null ? '$symbol$formatted' : formatted;
+  }
   // Get the theme data
   ThemeData get theme => Theme.of(this);
 

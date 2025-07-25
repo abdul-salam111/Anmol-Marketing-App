@@ -6,6 +6,7 @@ import 'package:anmol_marketing/data/models/get_models/get_products.dart';
 import 'package:anmol_marketing/views/widgets/widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class SelectProductScreen extends GetView<SelectProductController> {
@@ -71,11 +72,10 @@ class SelectProductScreen extends GetView<SelectProductController> {
                           padding: screenPadding,
                           itemCount: controller.filteredProducts.length,
                           itemBuilder: (context, index) {
-                            final product =
-                                controller.filteredProducts[index];
+                            final product = controller.filteredProducts[index];
                             return InkWell(
                               onTap: () {
-                                showProductDetails(context, product);
+                                showProductDetailsBottomSheet(context, product);
                               },
                               child: Container(
                                 decoration: BoxDecoration(),
@@ -83,20 +83,21 @@ class SelectProductScreen extends GetView<SelectProductController> {
                                   children: [
                                     ProductImage(
                                       imageUrl: product.productLogo!,
+                                      cacheKey: product.productId.toString(),
                                     ),
                                     SizedBox(width: 10),
-    
+
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment: crossAxisStart,
-    
+
                                         children: [
                                           Text(
                                             product.productName!,
                                             style: context.bodySmallStyle!
                                                 .copyWith(
-                                                  color: AppColors
-                                                      .blackTextColor,
+                                                  color:
+                                                      AppColors.blackTextColor,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                             maxLines: 1,
@@ -128,7 +129,7 @@ class SelectProductScreen extends GetView<SelectProductController> {
                                             ],
                                           ),
                                           SizedBox(height: 3),
-    
+
                                           Row(
                                             children: [
                                               Text(
@@ -142,7 +143,8 @@ class SelectProductScreen extends GetView<SelectProductController> {
                                               ),
                                               SizedBox(width: 5),
                                               Text(
-                                                product.tradePrice.toString(),
+                                                "Rs. ${context.formatPrice(product.tradePrice!)}",
+
                                                 style: context
                                                     .displayLargeStyle!
                                                     .copyWith(
@@ -155,7 +157,7 @@ class SelectProductScreen extends GetView<SelectProductController> {
                                             ],
                                           ),
                                           SizedBox(height: 3),
-    
+
                                           Row(
                                             children: [
                                               Text(
@@ -169,7 +171,8 @@ class SelectProductScreen extends GetView<SelectProductController> {
                                               ),
                                               SizedBox(width: 5),
                                               Text(
-                                                product.productStock
+                                                product.productStock!
+                                                    .round()
                                                     .toString(),
                                                 style: context
                                                     .displayLargeStyle!
@@ -185,34 +188,34 @@ class SelectProductScreen extends GetView<SelectProductController> {
                                         ],
                                       ),
                                     ),
-    
-                                    Container(
-                                      padding: defaultPadding,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color:
-                                              (controller.productQuantities[product] !=
-                                                      null &&
-                                                  controller
-                                                          .productQuantities[product]! >
-                                                      0)
-                                              ? Colors.black
-                                              : AppColors.darkGreyColor,
-                                          width:
-                                              (controller.productQuantities[product] !=
-                                                      null &&
-                                                  controller
-                                                          .productQuantities[product]! >
-                                                      0)
-                                              ? 2
-                                              : 1,
+
+                                    Obx(
+                                      () => Container(
+                                        padding: defaultPadding,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color:
+                                                (controller.productQuantities[product] !=
+                                                        null &&
+                                                    controller
+                                                            .productQuantities[product]! >
+                                                        0)
+                                                ? Colors.black
+                                                : AppColors.darkGreyColor,
+                                            width:
+                                                (controller.productQuantities[product] !=
+                                                        null &&
+                                                    controller
+                                                            .productQuantities[product]! >
+                                                        0)
+                                                ? 2
+                                                : 1,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            5,
+                                          ),
                                         ),
-                                        borderRadius: BorderRadius.circular(
-                                          5,
-                                        ),
-                                      ),
-                                      child: Obx(
-                                        () => Text(
+                                        child: Text(
                                           controller.productQuantities[product] ==
                                                   null
                                               ? "0"
@@ -251,7 +254,7 @@ class SelectProductScreen extends GetView<SelectProductController> {
                         ),
                       ),
                     ),
-    
+
                     Container(
                       padding: padding14,
                       height: 90,
@@ -284,14 +287,14 @@ class SelectProductScreen extends GetView<SelectProductController> {
                             children: [
                               Obx(
                                 () => Text(
-                                  "Rs. ${controller.companyTotal.value}",
+                                  "Rs. ${context.formatPrice(controller.companyTotal.value)}",
                                   style: context.bodyMediumStyle!.copyWith(),
                                 ),
                               ),
                               SizedBox(height: 10),
                               Obx(
                                 () => Text(
-                                  "Rs. ${controller.totalAmount.value}",
+                                  "Rs. ${context.formatPrice(controller.totalAmount.value)}",
                                   style: context.bodyMediumStyle!.copyWith(
                                     color: AppColors.appPrimaryColor,
                                   ),
@@ -330,147 +333,158 @@ class SelectProductScreen extends GetView<SelectProductController> {
     );
   }
 
-  void showProductDetails(BuildContext context, GetProductsModel product) {
+  void showProductDetailsBottomSheet(
+    BuildContext context,
+    GetProductsModel product,
+  ) {
     final int existingQty = controller.productQuantities[product] ?? 0;
     final TextEditingController quantityController = TextEditingController(
       text: existingQty > 0 ? existingQty.toString() : '',
     );
+    final RxString errorText = ''.obs;
+    final RxBool isValid = true.obs;
 
-    showGeneralDialog(
+    showModalBottomSheet(
       context: context,
-      barrierLabel: product.productName,
-      barrierDismissible: true,
-      barrierColor: Colors.black.withOpacity(0.5),
-      transitionDuration: const Duration(milliseconds: 150),
-      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
-      transitionBuilder: (_, anim, __, ___) {
-        return Transform.scale(
-          scale: anim.value,
-          child: Opacity(
-            opacity: anim.value,
-            child: Center(
-              child: Material(
-                type: MaterialType.transparency,
-                child: Container(
-                  width: 320,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            top: 20,
+            left: 20,
+            right: 20,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  product.productName ?? '',
+                  style: context.bodyMediumStyle!.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                ),
+                const SizedBox(height: 10),
+                CachedNetworkImage(
+                  cacheKey: product.productId.toString(),
+                  imageUrl: product.productLogo ?? '',
+                  height: 150,
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      "Pack: ${product.pack}",
+                      style: context.bodySmallStyle,
+                    ),
+                    Text(
+                      "T.P: Rs. ${product.tradePrice}",
+                      style: context.bodySmallStyle,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Available Stock: ", style: context.bodySmallStyle),
+                    Text(
+                      "${product.productStock!.toInt()}",
+                      style: context.bodySmallStyle!.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                Obx(
+                  () => Column(
                     children: [
-                      Text(
-                        product.productName!,
-                        style: context.bodyMediumStyle!.copyWith(
-                          fontWeight: FontWeight.bold,
+                      TextField(
+                        controller: quantityController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(
+                            product.productStock!.toInt().toString().length,
+                          ),
+                        ],
+                        onChanged: (val) {
+                          final int qty = int.tryParse(val.trim()) ?? 0;
+                          if (qty > product.productStock!.toInt()) {
+                            errorText.value =
+                                'You cannot enter more than available stock.';
+                            isValid.value = false;
+                          } else {
+                            errorText.value = '';
+                            isValid.value = true;
+                          }
+                        },
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.only(left: 10),
+                          labelStyle: context.bodySmallStyle,
+                          labelText: "Enter Quantity",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          errorText: errorText.value.isEmpty
+                              ? null
+                              : errorText.value,
                         ),
                       ),
                       const SizedBox(height: 10),
-                      CachedNetworkImage(
-                        imageUrl: product.productLogo!,
-                        height: 150,
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                "Pack: ",
-                                style: context.bodySmallStyle!.copyWith(
-                                  color: AppColors.darkGreyColor,
-                                ),
-                              ),
-                              const SizedBox(width: 5),
-                              Text(
-                                product.pack!,
-                                style: context.bodySmallStyle!.copyWith(
-                                  color: AppColors.blackTextColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                "T.P: ",
-                                style: context.bodySmallStyle!.copyWith(
-                                  color: AppColors.darkGreyColor,
-                                ),
-                              ),
-                              const SizedBox(width: 5),
-                              Text(
-                                "Rs. ${product.tradePrice.toString()}",
-                                style: context.bodySmallStyle!.copyWith(
-                                  color: AppColors.blackTextColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      (product.productStock! > 0.0)
-                          ? SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: TextField(
-                                controller: quantityController,
-                                keyboardType: TextInputType.number,
-                                decoration: const InputDecoration(
-                                  labelText: "Enter Quantity",
-                                  border: OutlineInputBorder(),
-                                ),
-                              ),
-                            )
-                          : SizedBox.square(),
-                      const SizedBox(height: 20),
-                      (product.productStock! > 0.0)
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    final quantity =
-                                        int.tryParse(quantityController.text) ??
-                                        0;
-                                    controller.updateProductQuantity(
-                                      product,
-                                      quantity,
-                                    );
-
-                                    Get.back();
-                                  },
-                                  child: const Text("Update"),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    controller.updateProductQuantity(
-                                      product,
-                                      0,
-                                    );
-                                    Get.back();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                  ),
-                                  child: const Text(
-                                    "Cancel",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            )
-                          : SizedBox.shrink(),
                     ],
                   ),
                 ),
-              ),
+                Obx(
+                  () => Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: isValid.value
+                            ? () {
+                                final int quantity =
+                                    int.tryParse(
+                                      quantityController.text.trim(),
+                                    ) ??
+                                    0;
+                                if (quantity > product.productStock!) {
+                                  Get.snackbar(
+                                    "Error",
+                                    "Quantity exceeds available stock.",
+                                  );
+                                  return;
+                                }
+                                controller.updateProductQuantity(
+                                  product,
+                                  quantity,
+                                );
+                                Get.back();
+                              }
+                            : null,
+                        child: const Text("Update"),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Get.back(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
             ),
           ),
         );
